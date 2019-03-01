@@ -1,2 +1,8 @@
-# Janue-Music
-毕业设计项目-简悦音乐
+# jian_yue
+
+A new Flutter application.
+
+## Getting Started
+
+For help getting started with Flutter, view our online
+[documentation](https://flutter.io/).
