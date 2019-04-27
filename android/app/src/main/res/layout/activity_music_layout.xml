@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:background="@color/color_4C000000"
+        android:id="@+id/iv_music_main_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <com.gdou.jianyue.widget.MusicToolBar
+        android:id="@+id/toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <com.gdou.jianyue.widget.RotateImageView
+
+        android:id="@+id/iv_album"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <com.hw.lrcviewlib.LrcView
+        android:visibility="gone"
+        android:id="@+id/au_lrcView"
+        android:layout_above="@id/ll"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:id="@+id/ll"
+        android:layout_above="@id/musicControlBarId"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="00:00"
+            android:id="@+id/tv_current_positon"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="7sp"
+            android:layout_width="20dp"
+            android:layout_height="match_parent" />
+        <SeekBar
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:thumb="@drawable/seekbar_thumb"
+            android:progressDrawable="@drawable/progress_bar_style"
+            android:id="@+id/pb_music_position_bar"
+            android:layout_weight="1"
+            android:indeterminateOnly="false"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_music_duration"
+            android:layout_marginEnd="5dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="00:00"
+            android:textSize="7sp"
+            android:layout_width="20dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_play_mode"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
+    <com.gdou.jianyue.widget.MusicControlBar
+        android:id="@+id/musicControlBarId"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:id="@+id/iv_play_list"
+        android:layout_marginBottom="25dp"
+        android:layout_marginEnd="27dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_play_btn_playlist"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+</RelativeLayout>

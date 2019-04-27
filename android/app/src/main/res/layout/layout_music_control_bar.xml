@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_last"
+        android:src="@drawable/bg_btn_last_selector"
+        android:layout_width="80dp"
+        android:layout_height="80dp"  />
+    <com.gdou.jianyue.widget.StartAndStopButton
+        android:id="@+id/iv_start_stop"
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
+    <ImageView
+        android:id="@+id/iv_next"
+        android:src="@drawable/bg_btn_next_selector"
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
+</LinearLayout>

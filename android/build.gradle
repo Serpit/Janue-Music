@@ -6,13 +6,17 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
     }
 }
 
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://github.com/500px/500px-android-blur/raw/master/releases/' }
     }
 }
 

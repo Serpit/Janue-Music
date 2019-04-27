@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion 27
 
@@ -34,11 +34,13 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.gdou.jianyue"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+       // renderscriptTargetApi 21
+       // renderscriptSupportModeEnabled true
     }
 
     buildTypes {
@@ -53,9 +55,31 @@ android {
 flutter {
     source '../..'
 }
-
+greendao {
+    schemaVersion 1//数据库版本号
+    daoPackage 'com.gdou.jianyue.greendao'//设置DaoMaster、DaoSession、Dao包名
+    targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
+    //targetGenDirTest：设置生成单元测试目录
+    //generateTests：设置自动生成单元测试用例
+}
 dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bifan-wei:LrcView:V1.3'
+    //annotationProcessor 'com.github.bumptech.glide:compiler:3.7.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.+'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'jp.wasabeef:glide-transformations:2.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.1.2'
+    implementation 'com.orhanobut:logger:2.1.0' // 打印日志
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    //implementation 'com.fivehundredpx:blurringview:1.0.0'
 }
