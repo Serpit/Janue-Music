@@ -29,9 +29,10 @@ public class MethodProxy {
         music.setAblum(methodCall.argument("album_title"));
         music.setAuthor(methodCall.argument("author"));
         music.setLrcLink(methodCall.argument("lrclink"));
-        music.setPicLink(methodCall.argument("pic_big"));
+        music.setPicLink(methodCall.argument("pic_huge"));
         music.setTitle(methodCall.argument("title"));
 
         DatabaseUtils.insertPlayingMusic(music);
+        MusicPlayList.getInstance().updateList();
     }
 }

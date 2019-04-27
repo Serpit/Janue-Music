@@ -9,11 +9,8 @@
         android:id="@+id/iv_music_main_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <com.gdou.jianyue.widget.MusicToolBar
-        android:id="@+id/toolbar"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
+
 
 
     <com.gdou.jianyue.widget.RotateImageView
@@ -22,6 +19,14 @@
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_marginStart="110dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/play_page_needle" />
+
     <com.hw.lrcviewlib.LrcView
         android:visibility="gone"
         android:id="@+id/au_lrcView"
@@ -90,4 +95,9 @@
         android:src="@drawable/ic_play_btn_playlist"
         android:layout_width="30dp"
         android:layout_height="30dp" />
+    <com.gdou.jianyue.widget.MusicToolBar
+        android:id="@+id/toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
 </RelativeLayout>

@@ -33,8 +33,7 @@ public class MusicPlayList {
     }
 
 
-    public void init(int curIndex){
-
+    public void init(int currentIndex){
         list =  DatabaseUtils.queryAllPlayingMusic();
     }
 
@@ -47,10 +46,30 @@ public class MusicPlayList {
     }
 
     public void updateList(){
-        list = DatabaseUtils.queryAllPlayingMusic();
+        list.addAll(DatabaseUtils.queryAllPlayingMusic());
     }
 
 
+    public PlayingMusic getMusciBySongId(long id){
+        for (PlayingMusic music : list) {
+            if (music.getSongId()==id){
+                return music;
+            }
+        }
+        return null;
+    }
+
+
+
+    public int getMusicIndexBySongId(long id){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getSongId()==id){
+                return i;
+            }
+        }
+
+        return 0;
+    }
 
     public PlayingMusic getLastMusic(){
         if (ObjectUtils.isNull(list) || ListUtils.isEmpty(list)) {
@@ -79,4 +98,7 @@ public class MusicPlayList {
     public  void saveCurIndex(){
         SPUtils.saveInt(Constants.SP_KEY_CURRENT_INDEX,currentIndex);
     }
+
+
+
 }

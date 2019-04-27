@@ -37,6 +37,9 @@ public class MusicService extends Service {
         controller.nextSong();
     }
 
+    private void switchMusic(long songid){
+        controller.switchMusic(songid);
+    }
 
     private void lastMusic(){
         controller.lastSong();
@@ -57,6 +60,10 @@ public class MusicService extends Service {
 
         public void lastMusic(){
             MusicService.this.lastMusic();
+        }
+
+        public void switchMusic(long songid){
+            MusicService.this.switchMusic(songid);
         }
     }
 

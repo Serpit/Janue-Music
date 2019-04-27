@@ -45,10 +45,7 @@ public class MainMusicPresenter implements MainMusicContract.Presenter {
     }
 
 
-    @Override
-    public void loadPlayMusicLink(long songId) {
-        mModel.savePlayMusicLink(songId);
-    }
+
 
     @Override
     public void loadPlayingMusicInfo(long songId) {

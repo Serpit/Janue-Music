@@ -5,28 +5,35 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.music.MusicPlayList;
+import com.gdou.jianyue.music.model.MainMusicModel;
 import com.gdou.jianyue.utils.ObjectUtils;
+import com.gdou.jianyue.utils.SPUtils;
 
 import java.io.IOException;
+import java.util.Random;
 
-public class MusicControllerImpl implements MusicController, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener {
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+
+public class MusicControllerImpl implements MusicController, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
     private static final String TAG = MusicControllerImpl.class.getSimpleName();
 
 
     private boolean isPrepared = false;
     private boolean isFirstLoad;
 
-
+    private String playMode;
     private static MediaPlayer mediaPlayer ;
     private MusicPlayList mMusicPlayList = MusicPlayList.getInstance();
     private static MusicController controller = new MusicControllerImpl();
     private static OnMusicPositionChangeListener positionChangeListener;
     private OnMusicStateChangeListener musicStateChangeListener;
+    private OnMusicChangeListener musicChangeListener;
     public static MusicController getInstance(){
         return controller;
     }
-
 
     @Override
     public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
@@ -44,12 +51,39 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
 
     @Override
     public void setOnMusicPositionChangeListener(OnMusicPositionChangeListener listener) {
-        this.positionChangeListener = listener;
+        positionChangeListener = listener;
+    }
+
+    @Override
+    public void setOnMusicChangeListener(OnMusicChangeListener listener) {
+        musicChangeListener = listener;
     }
 
     private MusicControllerImpl() {
         mediaPlayer =  new MediaPlayer();
+        playMode = SPUtils.getString(Constants.SP_KEY_PLAY_MODE);
         initMediaPlayer();
+    }
+
+
+    @Override
+    public void switchMusic(long songid) {
+        mediaPlayer.reset();
+        initMediaPlayer();
+        if (ObjectUtils.isNull(mMusicPlayList.getMusciBySongId(songid).getDownloadLink())){
+            MainMusicModel model = new MainMusicModel();
+            Disposable disposable =  model.savePlayMusicLink(songid).subscribe(new Consumer<String>() {
+                @Override
+                public void accept(String s) throws Exception {
+                    initDataSorce(mMusicPlayList.getMusciBySongId(songid).getDownloadLink());
+                    mMusicPlayList.setCurrentIndex(mMusicPlayList.getMusicIndexBySongId(songid));
+                }
+            });
+        }else {
+            initDataSorce(mMusicPlayList.getMusciBySongId(songid).getDownloadLink());
+            mMusicPlayList.setCurrentIndex(mMusicPlayList.getMusicIndexBySongId(songid));
+        }
+
     }
 
     @Override
@@ -61,7 +95,7 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
     }
 
     public void initDataSorce(String url) {
-        if (url!=null && url.isEmpty() ){
+        if (url==null || url.isEmpty() ){
             isPrepared = false;
             return;
         }
@@ -73,11 +107,14 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
             e.printStackTrace();
         }
     }
+
+
     private void initMediaPlayer(){
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         Log.d(TAG,"initMediaPlayer");
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnBufferingUpdateListener(this);
+        mediaPlayer.setOnCompletionListener(this);
     }
 
     /*移动到某个位置*/
@@ -110,18 +147,48 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
 
     @Override
     public void nextSong() {
-        mediaPlayer.reset();
-        initMediaPlayer();
-        initDataSorce(mMusicPlayList.getNextMusic().getDownloadLink());
+        switch (playMode){
+            case "play_mode_one":
+                start();
+                break;
+            case "play_mode_loop":
+                mediaPlayer.reset();
+                initMediaPlayer();
+                initDataSorce(mMusicPlayList.getNextMusic().getDownloadLink());
+                musicChangeListener.onMusicChange(mMusicPlayList.getCurrentIndex());
+                break;
+            case "play_mode_shuffle":
+                randomPlay();
+                break;
+        }
+
     }
 
     @Override
     public void lastSong() {
-        mediaPlayer.reset();
-        initMediaPlayer();
-        initDataSorce(mMusicPlayList.getLastMusic().getDownloadLink());
+        switch (playMode){
+            case "play_mode_one":
+                start();
+                break;
+            case "play_mode_loop":
+                mediaPlayer.reset();
+                initMediaPlayer();
+                initDataSorce(mMusicPlayList.getLastMusic().getDownloadLink());
+                musicChangeListener.onMusicChange(mMusicPlayList.getCurrentIndex());
+                break;
+            case "play_mode_shuffle":
+                randomPlay();
+                break;
+        }
+
     }
 
+    /*
+    * 随机播放
+    * */
+    private void randomPlay(){
+      //  int random = new Random()
+    }
     @Override
     public boolean isPalying() {
         if (ObjectUtils.isNotNull(mediaPlayer)){
@@ -139,19 +206,19 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
 
     @Override
     public void setPlayMode(String mode) {
-        switch (mode){
-            case "play_mode_one":
-                break;
-            case "play_mode_loop":
-                break;
-            case "play_mode_shuffle":
-                break;
-        }
+        SPUtils.saveString(Constants.SP_KEY_PLAY_MODE,mode);
+        playMode = mode;
+
     }
 
     @Override
     public void setOnMusicStartAndStopListener(OnMusicStateChangeListener listener) {
         this.musicStateChangeListener = listener;
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        nextSong();
     }
 
     static class UpDateMusicPositionTask extends AsyncTask<Void,Integer,Void>{

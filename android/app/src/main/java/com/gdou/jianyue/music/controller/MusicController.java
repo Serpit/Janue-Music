@@ -11,11 +11,16 @@ public interface MusicController {
     boolean isPalying();
     boolean isParpred();
     int getMusicDuration();
+    void switchMusic(long songid);
     void setOnMusicPositionChangeListener(OnMusicPositionChangeListener listener);
     void setOnMusicStartAndStopListener(OnMusicStateChangeListener listener);
+    void setOnMusicChangeListener(OnMusicChangeListener listener);
     void setPlayMode(String mode);
     interface OnMusicPositionChangeListener{
         void onMusicPositionChange(int position);
+    }
+    interface OnMusicChangeListener{
+        void onMusicChange(int position);
     }
     interface OnMusicStateChangeListener {
         void onMusicStart();

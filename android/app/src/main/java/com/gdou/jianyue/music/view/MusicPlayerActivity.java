@@ -1,12 +1,8 @@
 package com.gdou.jianyue.music.view;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,13 +37,12 @@ import com.hw.lrcviewlib.LrcRow;
 import com.hw.lrcviewlib.LrcView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-public class MusicPlayerActivity extends BaseMusicActivity implements View.OnClickListener, MusicControlBar.OnMusicControlEvent, MainMusicContract.View, MusicController.OnMusicStateChangeListener, MusicController.OnMusicPositionChangeListener {
-
-
-
+public class MusicPlayerActivity extends BaseMusicActivity implements View.OnClickListener,
+        MusicControlBar.OnMusicControlEvent, MainMusicContract.View,
+        MusicController.OnMusicStateChangeListener, MusicController.OnMusicPositionChangeListener,
+        MusicController.OnMusicChangeListener {
 
     private  MusicToolBar mMusicToolBar;
     String mSongName,mArtists;
@@ -65,17 +60,7 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
     private MusicPlayList mMusicPlayList = MusicPlayList.getInstance();
     private MusicController mController = MusicControllerImpl.getInstance();
     private String currentMode = SPUtils.getString(Constants.SP_KEY_PLAY_MODE);
-    /*ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mBinder = (MusicService.MusicBinder) iBinder;
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-
-        }
-    };*/
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,15 +69,13 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mSongId = bundle.getLong(Constants.SONG_ID);
         mSongName = bundle.getString(Constants.SONG_NAME);
         mArtists = bundle.getString(Constants.ARTISTS);
-        //MusicControllerImpl.URL_PALYING =  bundle.getString(Constants.URL);
-       // MusicControllerImpl.URL_PALYING = "http://zhangmenshiting.qianqian.com/data2/music/681ce060895fbef580764fee1ee872f7/596787767/24721251539600128.mp3?xcode=a2d075c5e660d87be23725bcf113dbcd";
+
         findViews();
         initData();
         initViews();
-
         mBinder = ((JanueMusicApplication) getApplication()).getMusicBinder();
-        //bindService(new Intent(this,MusicService.class),serviceConnection,BIND_AUTO_CREATE);
     }
+
 
 
 
@@ -139,6 +122,7 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         setPlayMode(currentMode);
         mMusicToolBar.setSongName(mSongName);
         mMusicToolBar.setArtists(mArtists);
+        mMusicControlBar.setIsPlaying(isPlaying);
         mMusicControlBar.setOnMusicControlEvent(this);
         iv_album.setOnClickListener(this);
         iv_play_mode.setOnClickListener(this);
@@ -169,12 +153,15 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
 
     @Override
     public void initData(){
+        isPlaying = mController.isPalying();
+
         mPresenter = new MainMusicPresenter();
         mPresenter.attachView(this);
         mPresenter.loadPlayingMusicInfo(mSongId);
-        mPresenter.loadPlayMusicLink(mSongId);
+
         mController.setOnMusicStartAndStopListener(this);
         mController.setOnMusicPositionChangeListener(this);
+        mController.setOnMusicChangeListener(this);
     }
     @Override
     public void onClick(View view) {
@@ -192,6 +179,12 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
     @Override
     protected void onResume() {
         super.onResume();
+        if (mMusicPlayList.getCurMusic().getSongId()!=mSongId){
+
+            mBinder.switchMusic(mSongId);
+            iv_album.startRotate();
+            mMusicControlBar.setIsPlaying(true);
+        }
     }
 
     @Override
@@ -234,24 +227,12 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
             }
         }
         setPlayMode(currentMode);
+        mController.setPlayMode(currentMode);
 
-        SPUtils.saveString(Constants.SP_KEY_PLAY_MODE,currentMode);
     }
     @Override
     public void initMusicList() {
 
-        /*String[] urls = {
-                "http://zhangmenshiting.qianqian.com/data2/music/b945b1d2be8542bd895a56a6b92e963c/594654945/3008959933600128.mp3?xcode=3539e41948eb80789614b4474386abae",
-                "http://zhangmenshiting.qianqian.com/data2/music/681ce060895fbef580764fee1ee872f7/596787767/24721251539600128.mp3?xcode=bc8d8a778a4fb5f1cc3224dc97e4d7a9",
-                "http://zhangmenshiting.qianqian.com/data2/music/03ac744cacee9e8fbbae3128cf7d185d/596947698/12267411954000900.flac?xcode=708768e0e6ebbe15539f0e82e788ec87"
-        };
-        List<Song> musicList = new ArrayList<>();
-        for (int i = 0; i < urls.length; i++) {
-            Song song = new Song();
-            song.setSongLink(urls[i]);
-            musicList.add(song);
-        }
-        mMusicPlayList.setList(musicList);*/
     }
 
     @Override
@@ -284,7 +265,7 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
 
     @Override
     public void onLrcLoad(File file) {
-        mLrcRows =  new LrcDataBuilder().Build(file);
+        mLrcRows = new LrcDataBuilder().Build(file);
         mLrcView.setLrcData(mLrcRows);
         mLrcView.setAutomaticMoveAnimationDuration(300);
         mLrcView.setLrcViewSeekListener((currentLrcRow,currentSelectedRowTime)->{
@@ -317,4 +298,17 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mMusicPositionBar.setMax(mController.getMusicDuration());
         tv_music_duration.setText(TimeUtils.generateTime(mController.getMusicDuration()));
     }
+
+    @Override
+    public void onMusicChange(int position) {
+        PlayingMusic music=   mMusicPlayList.getCurMusic();
+        mSongName = music.getTitle();
+        mArtists = music.getAuthor();
+        mMusicToolBar.setSongName(mSongName);
+        mMusicToolBar.setArtists(mArtists);
+
+        onMusicInfoLoad(music);
+    }
+
+
 }
