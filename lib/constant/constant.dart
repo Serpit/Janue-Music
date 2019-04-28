@@ -14,9 +14,9 @@ class Constants{
   static final String PARAM_QUERY = "query";
 
 
-   static  double DisplayWidth;
-   static double DisplayHeight;
+  static  double DisplayWidth;
+  static double DisplayHeight;
 
-   static final String DATA_BASE_CHANNEL = "janeMusic.flutter.io/database";
-   static final String START_ACTIVITY_CHANNEL = "janeMusic.flutter.io/startActivity";
+  static final String DATA_BASE_CHANNEL = "janeMusic.flutter.io/database";
+  static final String START_ACTIVITY_CHANNEL = "janeMusic.flutter.io/startActivity";
 }
