@@ -15,6 +15,7 @@ public interface MusicController {
     void setOnMusicPositionChangeListener(OnMusicPositionChangeListener listener);
     void setOnMusicStartAndStopListener(OnMusicStateChangeListener listener);
     void setOnMusicChangeListener(OnMusicChangeListener listener);
+    void resetPlayer();
     void setPlayMode(String mode);
     interface OnMusicPositionChangeListener{
         void onMusicPositionChange(int position);

@@ -5,18 +5,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-
-import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.music.MusicPlayList;
 import com.gdou.jianyue.music.service.MusicService;
 import com.gdou.jianyue.proxy.MethodChannelManager;
-import com.gdou.jianyue.proxy.MethodProxy;
-
-import java.util.Map;
-
 import io.flutter.app.FlutterActivity;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
+
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity {
@@ -42,6 +35,7 @@ public class MainActivity extends FlutterActivity {
     GeneratedPluginRegistrant.registerWith(this);
 
     MethodChannelManager.getInstance().registerMethodChannel(getFlutterView());
+    MethodChannelManager.getInstance().registerEventChannel(getFlutterView());
     bindService(new Intent(this,MusicService.class),serviceConnection,BIND_AUTO_CREATE);
   }
 

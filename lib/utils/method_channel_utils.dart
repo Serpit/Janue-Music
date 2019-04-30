@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 
-Future<Null> callNativeMethod(String channel,String nativeMethod,{Map params}) async {
+Future callNativeMethod(String channel,String nativeMethod,{Map params}) async {
   var platform =  MethodChannel(channel);
-  await platform.invokeMethod(nativeMethod,params);
+  return await platform.invokeMethod(nativeMethod,params);
 }

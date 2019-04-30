@@ -1,7 +1,8 @@
 import 'base.dart';
 import 'package:flutter/material.dart';
 import 'package:jian_yue/constant/constant.dart';
-
+import 'recent_play_list_page.dart';
+import 'local_music_page.dart';
 class MinePage extends PageProvideNode{
   @override
   Widget buildContent(BuildContext context) {
@@ -20,8 +21,10 @@ class _MinePageContent extends StatefulWidget{
 
 
 class _MinePageContentState extends State<_MinePageContent> implements ItemPresenter<Null>{
+  BuildContext _context;
   @override
   Widget build(BuildContext context) {
+    _context = context;
       return Material(
         child: Scaffold(
           body: ConstrainedBox(
@@ -73,8 +76,10 @@ class _MinePageContentState extends State<_MinePageContent> implements ItemPrese
   void onItemClick(String action, Null item) {
     switch(action){
       case 'ACTION_LOCAL':
+        Navigator.push(_context, MaterialPageRoute(builder: (context)=>LocalMusicListPage()));
         break;
       case 'ACTION_RECENTLY':
+        Navigator.push(_context, MaterialPageRoute(builder: (context)=>RecentPlayListPage()));
         break;
       case 'ACTION_COLLECTION':
         break;

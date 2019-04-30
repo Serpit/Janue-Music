@@ -16,11 +16,13 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.gdou.jianyue.R;
+import com.gdou.jianyue.utils.ObjectUtils;
 
 public class RotateImageView extends FrameLayout {
     private ImageView iv_album;
     private ObjectAnimator animator;
     private boolean isPause = false;
+    private Context context;
     public RotateImageView(Context context) {
         this(context,null);
     }
@@ -31,12 +33,15 @@ public class RotateImageView extends FrameLayout {
 
     public RotateImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
         initView(context);
     }
 
 
     public void initInAlbumImage(String url){
-       Glide.with(this).load(url).into(iv_album);
+        if (ObjectUtils.isNotNull(context)){
+            Glide.with(context).load(url).error(getResources().getDrawable(R.drawable.play_page_default_cover)).into(iv_album);
+        }
     }
     private void initView(Context context){
 

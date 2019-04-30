@@ -4,9 +4,11 @@ import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.utils.ObjectUtils;
 
 import java.util.Map;
-import java.util.function.BiConsumer;
 
+
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.view.FlutterView;
 
 public class MethodChannelManager {
@@ -31,5 +33,10 @@ public class MethodChannelManager {
         }
     }
 
-
+    public void registerEventChannel(FlutterView flutterView){
+        Map<String, EventChannel.StreamHandler> map = EventChannelMap.getMap(flutterView.getContext());
+        for (Map.Entry<String, EventChannel.StreamHandler> entry:map.entrySet()){
+            new EventChannel(flutterView,entry.getKey()).setStreamHandler(entry.getValue());
+        }
+    }
 }

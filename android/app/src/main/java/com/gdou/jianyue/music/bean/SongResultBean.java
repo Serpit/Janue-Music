@@ -3,15 +3,15 @@ package com.gdou.jianyue.music.bean;
 
 public class SongResultBean {
 
-    private SongInfo songInfo;
+    private SongInfo songinfo;
     private Bitrate bitrate;
-
+    private int error_code;
     public SongInfo getSongInfo() {
-        return songInfo;
+        return songinfo;
     }
 
     public void setSongInfo(SongInfo songInfo) {
-        this.songInfo = songInfo;
+        this.songinfo = songInfo;
     }
 
     public Bitrate getBitrate() {
@@ -22,7 +22,16 @@ public class SongResultBean {
         this.bitrate = bitrate;
     }
 
-   public static class SongInfo {
+
+    public int getError_code() {
+        return error_code;
+    }
+
+    public void setError_code(int error_code) {
+        this.error_code = error_code;
+    }
+
+    public static class SongInfo {
 
         private int special_type;
         private String pic_huge;

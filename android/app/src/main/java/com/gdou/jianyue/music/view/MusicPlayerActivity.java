@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -19,6 +20,7 @@ import com.gdou.jianyue.R;
 import com.gdou.jianyue.databasetable.PlayingMusic;
 import com.gdou.jianyue.music.MusicPlayList;
 
+import com.gdou.jianyue.music.adapter.PlayingLitsAdapter;
 import com.gdou.jianyue.music.constraint.MainMusicContract;
 import com.gdou.jianyue.music.controller.MusicController;
 import com.gdou.jianyue.music.controller.MusicControllerImpl;
@@ -27,11 +29,14 @@ import com.gdou.jianyue.music.service.MusicService;
 import com.gdou.jianyue.others.GlideBlurformation;
 import com.gdou.jianyue.utils.AnimationUtils;
 import com.gdou.jianyue.utils.DisPlayUtils;
+import com.gdou.jianyue.utils.ObjectUtils;
 import com.gdou.jianyue.utils.SPUtils;
 import com.gdou.jianyue.utils.TimeUtils;
 import com.gdou.jianyue.widget.MusicControlBar;
 import com.gdou.jianyue.widget.MusicToolBar;
+import com.gdou.jianyue.widget.PlayingListView;
 import com.gdou.jianyue.widget.RotateImageView;
+import com.gdou.share.ShareProxy;
 import com.hw.lrcviewlib.LrcDataBuilder;
 import com.hw.lrcviewlib.LrcRow;
 import com.hw.lrcviewlib.LrcView;
@@ -42,11 +47,12 @@ import java.util.List;
 public class MusicPlayerActivity extends BaseMusicActivity implements View.OnClickListener,
         MusicControlBar.OnMusicControlEvent, MainMusicContract.View,
         MusicController.OnMusicStateChangeListener, MusicController.OnMusicPositionChangeListener,
-        MusicController.OnMusicChangeListener {
+        MusicController.OnMusicChangeListener, PlayingListView.OnDeletePlayingListListener {
 
     private  MusicToolBar mMusicToolBar;
     String mSongName,mArtists;
-    long mSongId;
+    private long mSongId;
+    private PlayingListView playingListView;
     private MusicControlBar mMusicControlBar;
     private LrcView mLrcView;
     private ImageView iv_music_main_bg,iv_play_mode,iv_play_list;
@@ -91,9 +97,25 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         tv_music_duration = findViewById(R.id.tv_music_duration);
         iv_play_mode = findViewById(R.id.iv_play_mode);
         iv_play_list = findViewById(R.id.iv_play_list);
+        playingListView = new PlayingListView(this);
+
     }
     @Override
     public void initViews() {
+        playingListView.setOnDeletePlayingListListener(this);
+        playingListView.setOnHandleItemClickListener(new PlayingLitsAdapter.OnHandleItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                mBinder.switchMusic(mMusicPlayList.getList().get(position).getSongId());
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+                mMusicPlayList.deleteMusic(mMusicPlayList.getList().get(position).getSongId());
+                mBinder.nextMusic();
+            }
+        });
         mMusicPositionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -113,7 +135,7 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int progress = seekBar.getProgress();
-                int time = mController.getMusicDuration();
+              //  int time = mController.getMusicDuration();
                 //int position = progress*time/100;
                 mController.seekTo(progress);
                 mLrcView.seekLrcToTime((long) progress);
@@ -122,10 +144,12 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         setPlayMode(currentMode);
         mMusicToolBar.setSongName(mSongName);
         mMusicToolBar.setArtists(mArtists);
+        mMusicToolBar.setShareOnClickListener(this);
         mMusicControlBar.setIsPlaying(isPlaying);
         mMusicControlBar.setOnMusicControlEvent(this);
         iv_album.setOnClickListener(this);
         iv_play_mode.setOnClickListener(this);
+        iv_play_list.setOnClickListener(this);
 
         mLrcView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,18 +197,38 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
             case R.id.iv_play_mode:
                 changePlayMode();
                 break;
+            case R.id.iv_play_list:
+                playingListView.updateList();
+                playingListView.showAtLocation(this.findViewById(R.id.rootlayout), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,0);
+                break;
+            case R.id.iv_share:
+                ShareProxy.getInstance().shareText(this,"musicName: "+mSongName);
+                break;
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mMusicPlayList.getCurMusic().getSongId()!=mSongId){
 
-            mBinder.switchMusic(mSongId);
+            if (mMusicPlayList.getCurMusic().getSongId()!=mSongId){
+                mBinder.switchMusic(mSongId);
+            }else {
+                if (ObjectUtils.isNull(mMusicPlayList.getCurMusic().getDownloadLink())){
+                    mBinder.switchMusic(mSongId);
+                    iv_album.startRotate();
+                }else {
+                    mBinder.startMusic();
+                    mMusicPositionBar.setMax(mController.getMusicDuration());
+                    tv_music_duration.setText(TimeUtils.generateTime(mController.getMusicDuration()));
+
+                }
+            }
             iv_album.startRotate();
             mMusicControlBar.setIsPlaying(true);
-        }
+
+
+
     }
 
     @Override
@@ -192,11 +236,12 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         iv_album.initInAlbumImage(music.getPicLink());
 
         mPresenter.downloadLrcFile(music.getLrcLink(),music.getTitle());
-        Glide.with(this).load(music.getPicLink())
-                .skipMemoryCache(true) // 不使用内存缓存
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .transform(new GlideBlurformation(this),new CenterCrop())
-                .into(iv_music_main_bg);
+        if(ObjectUtils.isNotNull(this)){
+            Glide.with(this).load(music.getPicLink())
+                    .transform(new GlideBlurformation(this),new CenterCrop())
+                    .into(iv_music_main_bg);
+        }
+
     }
 
     private void setPlayMode(String mode){
@@ -306,9 +351,18 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mArtists = music.getAuthor();
         mMusicToolBar.setSongName(mSongName);
         mMusicToolBar.setArtists(mArtists);
-
+        mSongId = music.getSongId();
         onMusicInfoLoad(music);
+        iv_album.startRotate();
+        isPlaying = true;
+        mMusicControlBar.setIsPlaying(true);
     }
 
 
+    @Override
+    public void clearPlayingList() {
+        mMusicPlayList.clearPlayingList();
+        mBinder.resetPlayer();
+        finish();
+    }
 }

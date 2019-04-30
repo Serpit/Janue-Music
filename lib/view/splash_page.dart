@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:jian_yue/utils/widget_utils.dart';
 import 'package:jian_yue/constant/constant.dart';
 import 'home_page.dart';
+import 'package:jian_yue/utils/permission_utils.dart';
 class SplashPage extends PageProvideNode{
 
 
@@ -47,6 +48,7 @@ class SpalshPageContent extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    requestPermission();
     mContext = context;
     mProvide = Provide.value<SplashProvide>(context);
     getImageUrl();

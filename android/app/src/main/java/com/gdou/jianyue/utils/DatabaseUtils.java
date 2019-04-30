@@ -33,11 +33,24 @@ public class DatabaseUtils {
             JanueMusicApplication.getDaoSession().getPlayingMusicDao().insert(playingMusic);
         }
 
+        RecentMusic recentMusic = new RecentMusic();
+        recentMusic.setTitle(playingMusic.getTitle());
+        recentMusic.setAblum(playingMusic.getAblum());
+        recentMusic.setAuthor(playingMusic.getAuthor());
+        recentMusic.setDownloadLink(playingMusic.getDownloadLink());
+        recentMusic.setPicLink(playingMusic.getPicLink());
+        recentMusic.setSongId(playingMusic.getSongId());
+        recentMusic.setLrcLink(playingMusic.getLrcLink());
+        insertRecentMusic(recentMusic);
+
     }
 
 
     public static void insertRecentMusic(RecentMusic recentMusic){
-        JanueMusicApplication.getDaoSession().getRecentMusicDao().save(recentMusic);
+        if (ObjectUtils.isNull(JanueMusicApplication.getDaoSession().getRecentMusicDao().load(recentMusic.getSongId()))){
+            JanueMusicApplication.getDaoSession().getRecentMusicDao().insert(recentMusic);
+        }
+
     }
 
 
@@ -69,6 +82,9 @@ public class DatabaseUtils {
         return JanueMusicApplication.getDaoSession().getRecentMusicDao().loadAll();
     }
 
+    public static  void deleteAllPlayingLit(){
+        JanueMusicApplication.getDaoSession().getPlayingMusicDao().deleteAll();
+    }
 
 
 }

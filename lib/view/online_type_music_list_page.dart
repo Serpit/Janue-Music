@@ -121,7 +121,7 @@ class _OnLineTypeMusicListPageContentState extends State<_OnLineTypeMusicListPag
                       child:  ListView.separated(
                           itemBuilder: (context,position)=>buildListItemWidget(position),
                           separatorBuilder: (context,position)=>Divider(color: Colors.grey,),
-                          itemCount: mProvide.response.songList.length
+                          itemCount: mProvide.responseList.length
                       ),
                     )
                 ),
@@ -137,45 +137,62 @@ class _OnLineTypeMusicListPageContentState extends State<_OnLineTypeMusicListPag
   }
 
   Widget buildListItemWidget(int position){
-    return InkWell(
-      onTap: ()=>onItemClick(position),
-      child: Container(
-        width: Constants.DisplayWidth,
-
-        height: 70,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              left: 20,
-              top: 15,
-              child: buildMusicIcon(position)
-            ),
-            Positioned(
-              left: 90,
-              top: 15,
-              child: buildSongNameText(position)
-            ),
-            Positioned(
-              left: 90,
-              top: 45,
-              child: buildArtist( position)
-            ),
-            Positioned(
-                right: 0,
-                child: GestureDetector(
-                  onTap: ()=>onItemMoreOnClick(position),
-                  child:  Container(
-                    height: 70,
-                    width: 30,
-                    child: Icon(Icons.more_vert,color: Colors.grey,),
-                  ),
-                )
-            ),
-
-          ],
+    if(position==mProvide.responseList.length-1){
+      print(position);
+      loadList(_info.type, 10, position+1);
+      return Container(
+        padding: const EdgeInsets.all(16.0),
+        alignment: Alignment.center,
+        child: SizedBox(
+            width: 24.0,
+            height: 24.0,
+            child: CircularProgressIndicator(strokeWidth: 2.0)
         ),
-      ),
-    );
+      );
+    }else{
+      return InkWell(
+        onTap: ()=>onItemClick(position),
+        child: Container(
+          width: Constants.DisplayWidth,
+
+          height: 70,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                  left: 20,
+                  top: 15,
+                  child: buildMusicIcon(position)
+              ),
+              Positioned(
+                  left: 90,
+                  top: 15,
+                  child: buildSongNameText(position)
+              ),
+              Positioned(
+                  left: 90,
+                  top: 45,
+                  child: buildArtist( position)
+              ),
+              Positioned(
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: ()=>onItemMoreOnClick(position),
+                    child:  Container(
+                      height: 70,
+                      width: 30,
+                      child: Icon(Icons.more_vert,color: Colors.grey,),
+                    ),
+                  )
+              ),
+
+            ],
+          ),
+        ),
+      );
+    }
+
+
+
 
   }
 
@@ -184,7 +201,7 @@ class _OnLineTypeMusicListPageContentState extends State<_OnLineTypeMusicListPag
     if(mProvide.isLoading){
       return Image.asset('images/default_cover.png',width: 50,height: 50,);
     }else{
-      return Image.network(mProvide.response.songList[position].album500500,width: 50,height: 50,);
+      return Image.network(mProvide.responseList[position].album500500,width: 50,height: 50,);
     }
   }
   Widget buildArtist(int position){
@@ -192,7 +209,7 @@ class _OnLineTypeMusicListPageContentState extends State<_OnLineTypeMusicListPag
     if(mProvide.isLoading){
       artist = '加载中...';
     }else{
-      artist = mProvide.response.songList[position].author;
+      artist = mProvide.responseList[position].author;
     }
 
     return Text(artist,style: TextStyle(fontSize: 12,color: Colors.grey),);
@@ -204,7 +221,7 @@ class _OnLineTypeMusicListPageContentState extends State<_OnLineTypeMusicListPag
     if(mProvide.isLoading){
       songName = '加载中...';
     }else{
-      songName = mProvide.response.songList[position].title;
+      songName = mProvide.responseList[position].title;
       if(songName.length>14){
         songName = songName.substring(0,14)+"...";
       }
@@ -213,7 +230,7 @@ class _OnLineTypeMusicListPageContentState extends State<_OnLineTypeMusicListPag
     return Text(songName,style: TextStyle(fontSize: 17),);
   }
   void onItemClick(int position){
-    callNativeMethod(Constants.DATA_BASE_CHANNEL, 'insertPlaying',params : mProvide.response.songList[position].toJson());
+    callNativeMethod(Constants.DATA_BASE_CHANNEL, 'insertPlaying',params : mProvide.responseList[position].toJson());
   }
 
   void  onItemMoreOnClick(int position){

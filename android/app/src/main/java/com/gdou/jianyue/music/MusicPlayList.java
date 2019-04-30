@@ -46,6 +46,7 @@ public class MusicPlayList {
     }
 
     public void updateList(){
+        list.clear();
         list.addAll(DatabaseUtils.queryAllPlayingMusic());
     }
 
@@ -59,7 +60,16 @@ public class MusicPlayList {
         return null;
     }
 
+    public void clearPlayingList(){
+        list.clear();
+        currentIndex = 0;
+        DatabaseUtils.deleteAllPlayingLit();
+    }
 
+    public void deleteMusic(long id){
+        list.remove(list.get(getMusicIndexBySongId(id)));
+        DatabaseUtils.deletePlayingMusic(id);
+    }
 
     public int getMusicIndexBySongId(long id){
         for (int i = 0; i < list.size(); i++) {
@@ -75,7 +85,7 @@ public class MusicPlayList {
         if (ObjectUtils.isNull(list) || ListUtils.isEmpty(list)) {
             return null;
         }
-        currentIndex = (currentIndex -1)>=0 ? currentIndex -1: 0;
+        currentIndex = (currentIndex -1)>=0 ? currentIndex -1: list.size()-1;
         return list.get(currentIndex);
     }
 
@@ -83,7 +93,7 @@ public class MusicPlayList {
         if (ObjectUtils.isNull(list) || ListUtils.isEmpty(list)) {
             return null;
         }
-        currentIndex = currentIndex +1>=list.size()-1? list.size()-1 : currentIndex +1 ;
+        currentIndex = (currentIndex +1>list.size()-1)? 0 : currentIndex +1 ;
         return list.get(currentIndex);
 
     }

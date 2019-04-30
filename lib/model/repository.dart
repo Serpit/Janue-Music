@@ -1,6 +1,8 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:jian_yue/constant/constant.dart';
 import 'package:jian_yue/utils/net_utils.dart';
+import 'package:jian_yue/utils/method_channel_utils.dart';
+import 'package:jian_yue/constant/constant.dart';
 class MusicService{
   Observable searchMusic(Map<String,String> params) => get("",params);
   Observable  getBillList(Map<String,dynamic> params) => get("", params);
@@ -11,22 +13,47 @@ class ImageService{
 }
 
 class MusicRepo {
-  final MusicService _remote;
+  final MusicService remote;
 
   /// sharedPreference
   ///
   /// 也应该算在Model层，在这里面处理数据的读取
 
 
-  MusicRepo(this._remote);
+    MusicRepo({this.remote});
 
+  Observable getCurIndex(){
+    Future future = callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'getCurIndex');
+    return Observable.fromFuture(future);
+  }
 
+  Observable getLocalMusicList(){
+    Future future = callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'getLocalMusicList');
+    return Observable.fromFuture(future);
+  }
+
+  Observable getPlayingList(){
+    Future future = callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'getPlayingList');
+    return Observable.fromFuture(future);
+  }
+
+  Observable loadRecentPlayList(){
+     Future future =  callNativeMethod(Constants.DATA_BASE_CHANNEL, 'queryRecent') ;
+
+     return Observable.fromFuture(future);
+
+  }
+
+  Observable getIsPlaying(){
+    Future future = callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'getIsPlaying');
+    return Observable.fromFuture(future);
+  }
   Observable searchMusic(String keyword) {
     Map<String, String> params = {
       Constants.REQUEST_METHOD: Constants.REQUEST_METHOD_QUERY,
       Constants.PARAM_QUERY: keyword
     };
-    return _remote.searchMusic(params);
+    return remote.searchMusic(params);
   }
 
   Observable getBillList(int type){
@@ -39,7 +66,7 @@ class MusicRepo {
       Constants.PARAM_SIZE : size,
       Constants.PARAM_OFFSET : offset
     };
-    return _remote.getBillList(params);
+    return remote.getBillList(params);
   }
 
 }

@@ -6,6 +6,7 @@ class Constants{
   static final String REQUEST_METHOD_QUERY = "baidu.ting.search.catalogSug";
   static final String REQUEST_METHOD_GET_LIST = "baidu.ting.billboard.billList";
   static final String REQUEST_METHOD_ARTIST_INFO = "baidu.ting.artist.getInfo";
+  static final String REQUEST_METHOD_DOWNLOAD_INFO =  "baidu.ting.song.play";
   static final String PARAM_TYPE = "type";
   static final String PARAM_SIZE = "size";
   static final String PARAM_OFFSET = "offset";
@@ -14,9 +15,10 @@ class Constants{
   static final String PARAM_QUERY = "query";
 
 
-  static  double DisplayWidth;
+  static double DisplayWidth;
   static double DisplayHeight;
 
   static final String DATA_BASE_CHANNEL = "janeMusic.flutter.io/database";
   static final String START_ACTIVITY_CHANNEL = "janeMusic.flutter.io/startActivity";
+  static final String MUSIC_CONTROL_CHANNEL = "janeMusic.flutter.io/controlMusic";
 }

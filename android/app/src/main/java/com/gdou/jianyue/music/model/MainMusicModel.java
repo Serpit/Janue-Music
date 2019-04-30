@@ -42,17 +42,10 @@ public class MainMusicModel implements MainMusicContract.Model {
     }
 
     @Override
-    public Observable<String> savePlayMusicLink(long songId) {
+    public Observable<SongResultBean> savePlayMusicLink(long songId) {
       return NetClient.getInstance().createService(ApiService.class).getSongMsg(Constants.METHOD_GET_MUSIC_INFO,""+songId)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).map(new Function<SongResultBean, String>() {
-                  @Override
-                  public String apply(SongResultBean songResultBean) throws Exception {
-                      DatabaseUtils.inserMusicDownloadLink(songId,songResultBean.getBitrate().getFile_link());
-                      MusicPlayList.getInstance().updateList();
-                      return songResultBean.getBitrate().getFile_link();
-                  }
-              });
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<PlayingMusic> loadPlayingMusicInfo(long songId){

@@ -51,6 +51,9 @@ public class MusicToolBar extends FrameLayout {
 
     }
 
+    public void setShareOnClickListener(OnClickListener listener){
+        iv_share.setOnClickListener(listener);
+    }
     private void initListener(){
 
         if (mContext instanceof Activity){

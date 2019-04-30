@@ -7,6 +7,7 @@ import 'package:dartin/dartin.dart';
 import 'package:provide/provide.dart';
 import 'package:jian_yue/bean/search_result_bean.dart';
 import 'package:jian_yue/bean/song_bean.dart';
+import 'package:jian_yue/utils/method_channel_utils.dart';
 class SearchPage extends PageProvideNode{
 
 
@@ -63,7 +64,7 @@ class _SearchPageContentState extends State<_SearchPageContent>{
   }
   Widget buidListWidget(int position,Song searchResult){
     return InkWell(
-      onTap:()=> onItemOnClick(position),
+      onTap:()=> onItemOnClick(position,searchResult),
       child: Container(
         height: 70,
         width: Constants.DisplayWidth,
@@ -101,8 +102,10 @@ class _SearchPageContentState extends State<_SearchPageContent>{
   void onItemMoreOnClick(int position){
     print("item more click");
   }
-  void onItemOnClick(int position){
-    print('item click');
+  void onItemOnClick(int position,Song searchResult){
+    ///print('item click');
+    callNativeMethod(Constants.START_ACTIVITY_CHANNEL, 'startMusicActivityWithoutInfo',params: searchResult.toJson());
+
   }
   void onEditingComplete(String keyword){
     print('editing complete :${keyword}');

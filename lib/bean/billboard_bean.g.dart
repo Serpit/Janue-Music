@@ -27,7 +27,6 @@ Billboard _$BillboardFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$BillboardToJson(Billboard instance) => <String, dynamic>{
       'billboard_no': instance.billboardNo,
       'update_date': instance.updateDate,
-
       'havemore': instance.havemore,
       'name': instance.name,
       'comment': instance.comment,

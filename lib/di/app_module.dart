@@ -9,6 +9,8 @@ import 'package:jian_yue/viewmodel/splash_provide.dart';
 import 'package:jian_yue/viewmodel/online_music_list_provide.dart';
 import 'package:jian_yue/viewmodel/search_provide.dart';
 import 'package:jian_yue/viewmodel/online_type_music_list_provide.dart';
+import 'package:jian_yue/viewmodel/recent_play_list_provide.dart';
+import 'package:jian_yue/viewmodel/local_music_provide.dart';
 const testScope = DartInScope('test');
 
 
@@ -31,6 +33,8 @@ final localModule = Module([
 
 final viewModelModule = Module([
   //factory<HomeProvide>(({params}) => HomeProvide(params.get(0), get())),
+  factory<LocalMusicListProvide>(({params})=>LocalMusicListProvide(get())),
+  factory<RectentPlayListProvide>(({params})=>RectentPlayListProvide(get())),
   factory<OnlineTypeMusicListProvide>(({params})=>OnlineTypeMusicListProvide(get())),
   factory<OnLineMusicListProvide>(({params}) => OnLineMusicListProvide(get())),
   factory<SplashProvide>(({params}) => SplashProvide(get())),
@@ -40,7 +44,7 @@ final viewModelModule = Module([
 
 
 final repoModule = Module([
-  lazy<MusicRepo>(({params}) => MusicRepo(get())),
+  lazy<MusicRepo>(({params}) => MusicRepo(remote: get())),
   lazy<ImageRepo>(({params}) => ImageRepo(get())),
 ]);
 

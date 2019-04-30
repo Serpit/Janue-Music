@@ -3,6 +3,7 @@ package com.gdou.jianyue.music.constraint;
 import android.content.Context;
 
 import com.gdou.jianyue.databasetable.PlayingMusic;
+import com.gdou.jianyue.music.bean.SongResultBean;
 
 import java.io.File;
 
@@ -22,7 +23,7 @@ public interface MainMusicContract {
     interface Model {
         Observable<File> loadLrcFile(String lrcUrl, String file);
         Observable<PlayingMusic> loadPlayingMusicInfo(long songId);
-        Observable<String> savePlayMusicLink(long songId);
+        Observable<SongResultBean> savePlayMusicLink(long songId);
     }
 
     interface Presenter {

@@ -1,4 +1,4 @@
-package com.gdou.jianyue.flutterplugin;
+package com.gdou.jianyue.nativeplugin;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.proxy.MethodProxy;
+import com.gdou.jianyue.utils.TextUtils;
 
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
@@ -15,7 +16,7 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
 
     private static final  String TAG= "DatabasePlugin";
     private static final  String METHOD_INSERT = "insertPlaying";
-    private static final  String METHOD_QUERY = "query";
+    private static final  String METHOD_QUERY = "queryRecent";
     private static final  String METHOD_DELETE = "update";
 
     private Context mContext;
@@ -29,7 +30,7 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
         switch (methodCall.method){
             case METHOD_QUERY:
 
-                //DatabaseUtils.insertPlayingMusic();
+                MethodProxy.queryAllRecentMusic(result);
                 break;
             case METHOD_DELETE:
                 break;
@@ -37,7 +38,7 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
                 Log.d(TAG,methodCall.arguments.toString());
                 MethodProxy.addIntoPlayingList(methodCall);
                 Bundle musicBundle = new Bundle();
-                musicBundle.putString(Constants.SONG_NAME,methodCall.argument("title"));
+                musicBundle.putString(Constants.SONG_NAME, TextUtils.removeExcess(methodCall.argument("title")));
                 musicBundle.putString(Constants.ARTISTS,methodCall.argument("author"));
                 musicBundle.putLong(Constants.SONG_ID,Long.parseLong(methodCall.argument("song_id")));
                 MethodProxy.startMusicActivity((FlutterActivity)mContext,musicBundle);

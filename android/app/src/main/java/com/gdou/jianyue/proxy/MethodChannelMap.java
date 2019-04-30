@@ -2,8 +2,9 @@ package com.gdou.jianyue.proxy;
 
 import android.content.Context;
 
-import com.gdou.jianyue.flutterplugin.DatabasePlugin;
-import com.gdou.jianyue.flutterplugin.StartActivityPlugin;
+import com.gdou.jianyue.nativeplugin.DatabasePlugin;
+import com.gdou.jianyue.nativeplugin.MusicControlPlugin;
+import com.gdou.jianyue.nativeplugin.StartActivityPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +18,12 @@ public class MethodChannelMap {
     private static final String START_ACTIVITY_CHANNEL = "janeMusic.flutter.io/startActivity";
     private static final String DATA_BASE_CHANNEL = "janeMusic.flutter.io/database";
 
-
+    private static final String MUSIC_CONTROL_CHANNEL = "janeMusic.flutter.io/controlMusic";
 
     public static Map<String, MethodChannel.MethodCallHandler> getMap (Context context){
         map.put(START_ACTIVITY_CHANNEL,new StartActivityPlugin(context));
         map.put(DATA_BASE_CHANNEL,new DatabasePlugin(context));
+        map.put(MUSIC_CONTROL_CHANNEL,new MusicControlPlugin(context));
         return  map;
     }
 
