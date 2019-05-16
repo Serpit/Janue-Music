@@ -4,7 +4,7 @@ import 'package:provide/provide.dart';
 import 'package:dartin/dartin.dart';
 import 'package:jian_yue/constant/constant.dart';
 import 'package:jian_yue/viewmodel/local_music_provide.dart';
-
+import 'package:jian_yue/utils/method_channel_utils.dart';
 
 class LocalMusicListPage extends PageProvideNode{
 
@@ -127,6 +127,9 @@ class _LocalMusicListPageContentState extends State<_LoacalMusicListPageConetnt>
   }
   void onItemClick(int position){
 
+    int songid = mProvide.response[position].songid;
+    print(songid);
+    callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'playLocalMusic',params: {'songid':'${songid}'});
   }
   void  onItemMoreOnClick(int position){
     print('type:${position}');

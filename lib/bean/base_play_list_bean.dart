@@ -17,9 +17,9 @@ class BasePlayListItemInfo{
   int songid;
   String songname;
   String artist;
-  String piclink;
-
-  BasePlayListItemInfo(this.songid, this.songname, this.artist,this.piclink);
+  String playlink;
+  String ablum;
+  BasePlayListItemInfo(this.songid, this.songname, this.artist,this.playlink,this.ablum);
 
   factory BasePlayListItemInfo.fromJson(Map<String, dynamic> json) => _$RecentPlayListItemInfoFromJson(json);
   Map<String, dynamic> toJson() => _$RecentPlayListItemInfoToJson(this);

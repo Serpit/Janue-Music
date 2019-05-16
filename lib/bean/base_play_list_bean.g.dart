@@ -9,7 +9,7 @@ part of 'base_play_list_bean.dart';
 BasePlayListItemInfo _$RecentPlayListItemInfoFromJson(
     Map<String, dynamic> json) {
   return BasePlayListItemInfo((json['songid'] as int)?.toInt(),
-      json['songname'] as String, json['artist'] as String,json['piclink'] as String);
+      json['songname'] as String, json['artist'] as String,json['playlink'] as String,json['ablum'] as String);
 }
 
 Map<String, dynamic> _$RecentPlayListItemInfoToJson(
@@ -18,5 +18,6 @@ Map<String, dynamic> _$RecentPlayListItemInfoToJson(
       'songid': instance.songid,
       'songname': instance.songname,
       'artist': instance.artist,
-      'piclink': instance.piclink
+      'playlink': instance.playlink,
+      'ablum': instance.ablum
     };

@@ -69,6 +69,14 @@ public class DatabaseUtils {
     }
 
 
+    public static void deleteAllPlayingMusic(){
+        JanueMusicApplication.getDaoSession().getPlayingMusicDao().deleteAll();
+    }
+
+    public static void insertPlayingMusic(List<PlayingMusic> playingMusics){
+        JanueMusicApplication.getDaoSession().getPlayingMusicDao().insertInTx(playingMusics);
+    }
+
     public static PlayingMusic queryPlayingMusicById(long songId){
         return JanueMusicApplication.getDaoSession().getPlayingMusicDao().loadByRowId(songId);
     }

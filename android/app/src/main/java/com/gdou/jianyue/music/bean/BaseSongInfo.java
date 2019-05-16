@@ -7,7 +7,8 @@ public class BaseSongInfo {
     private long songid;
     private String songname;
     private String artist;
-    private String piclink;
+    private String playlink;
+    private String ablum;
     public long getSongid() {
         return songid;
     }
@@ -33,11 +34,19 @@ public class BaseSongInfo {
     }
 
 
-    public String getPicLink() {
-        return piclink;
+    public String getPlaylink() {
+        return playlink;
     }
 
-    public void setPicLink(String picLink) {
-        this.piclink = picLink;
+    public void setPlaylink(String playlink) {
+        this.playlink = playlink;
+    }
+
+    public String getAblum() {
+        return ablum;
+    }
+
+    public void setAblum(String ablum) {
+        this.ablum = ablum;
     }
 }

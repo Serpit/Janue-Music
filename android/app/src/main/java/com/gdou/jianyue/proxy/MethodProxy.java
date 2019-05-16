@@ -139,7 +139,7 @@ public class MethodProxy {
             info.setSongid(music.getSongId());
             info.setArtist(music.getAuthor());
             info.setSongname(music.getTitle());
-            info.setPicLink(music.getPicLink());
+            info.setPlaylink(music.getPicLink());
             list.add(info);
          }
          Gson gson = new Gson();
@@ -214,5 +214,10 @@ public class MethodProxy {
     public static void setMobileDownloadEnable(MethodCall methodCall){
         Boolean value = methodCall.argument(Constants.SP_kEY_NET_DOWNLOAD);
         SPUtils.saveBoolean(Constants.SP_kEY_NET_DOWNLOAD,value);
+    }
+
+    public static void playLocalMusic(MethodCall methodCall,Context context){
+        String  songid = methodCall.argument("songid");
+        LocalMusicProxy.getInstance().playLocalMusic(Long.parseLong(songid),context);
     }
 }

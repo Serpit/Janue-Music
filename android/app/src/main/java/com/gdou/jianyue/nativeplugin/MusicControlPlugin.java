@@ -18,6 +18,7 @@ public class MusicControlPlugin implements MethodChannel.MethodCallHandler {
     private static final String METHOD_GET_LOCAL_MUSIC_LIST = "getLocalMusicList";
     private static final String METHOD_SWITCH_MUSIC = "switchMusic";
     private static final String METHOD_GET_CURRENT_INDEX = "getCurIndex";
+    private static final String METHOD_PLAY_LOCAL_MUSIC = "playLocalMusic";
     public MusicControlPlugin(Context context) {
         this.context = context;
     }
@@ -45,6 +46,9 @@ public class MusicControlPlugin implements MethodChannel.MethodCallHandler {
                 break;
             case METHOD_GET_CURRENT_INDEX:
                 MethodProxy.getCurIndex(result);
+                break;
+            case METHOD_PLAY_LOCAL_MUSIC:
+                MethodProxy.playLocalMusic(methodCall,context);
                 break;
         }
     }

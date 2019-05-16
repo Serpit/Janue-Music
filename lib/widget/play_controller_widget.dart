@@ -133,7 +133,7 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
     if(_response==null){
       return Image.asset('images/default_cover.png',width: 30,height: 30,);
     }else{
-      return Image.network(_response[position].piclink,width: 30,height: 30,);
+      return Image.network(_response[position].playlink,width: 30,height: 30,);
     }
   }
   void onClickPlayBtn(){

@@ -6,17 +6,26 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.gdou.jianyue.databasetable.PlayingMusic;
+import com.gdou.jianyue.music.MusicPlayList;
 import com.gdou.jianyue.music.bean.BaseSongInfo;
+import com.gdou.jianyue.music.controller.MusicController;
+import com.gdou.jianyue.music.controller.MusicControllerImpl;
+import com.gdou.jianyue.utils.DatabaseUtils;
 import com.gdou.jianyue.utils.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+//本地音乐的操作
 public class LocalMusicProxy {
     private LocalMusicProxy() {
     }
-    private static LocalMusicProxy instance;
+    private static LocalMusicProxy instance = new LocalMusicProxy();
+
     private static final String TAG = LocalMusicProxy.class.getSimpleName();
+
     public static  LocalMusicProxy getInstance(){
         if (ObjectUtils.isNotNull(instance)){
             return instance;
@@ -41,19 +50,41 @@ public class LocalMusicProxy {
                 /*long duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));*/
                 String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-
+                String ablum = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 int ismusic = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.IS_MUSIC));
                 if (ismusic==1){
                     info.setSongid(id);
                     info.setSongname(title);
                     info.setArtist(artist);
-                    info.setPicLink(url);
+                    info.setPlaylink(url);
+                    info.setAblum(ablum);
                     baseSongInfoList.add(info);
                 }
-               // Log.d(TAG,"title: "+title+"artist  :"+artist+"isMusic: "+ismusic+"url: "+url+"size: "+size+"duration: "+ duration);
+                //Log.d(TAG,"title: "+title+"artist  :"+artist+"isMusic: "+ismusic+"url: "+url+"ablum: "+ablum);
                 cursor.moveToNext();
             }
         }
         return baseSongInfoList;
     }
+
+    public  void playLocalMusic(long songid,Context context){
+        //先进行删除操作
+        DatabaseUtils.deleteAllPlayingMusic();
+        //再将本地的音乐全部入库
+        List<BaseSongInfo> list =  getInstance().getLocalMusicList(context);
+        List<PlayingMusic> playingMusicList = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            PlayingMusic playingMusic = new PlayingMusic();
+            playingMusic.setAblum(list.get(i).getAblum());
+            playingMusic.setDownloadLink(list.get(i).getPlaylink());
+            playingMusic.setAuthor(list.get(i).getArtist());
+            playingMusic.setTitle(list.get(i).getSongname());
+            playingMusic.setSongId(list.get(i).getSongid());
+            playingMusicList.add(playingMusic);
+        }
+        DatabaseUtils.insertPlayingMusic(playingMusicList);
+        MusicPlayList.getInstance().updateList();
+        MusicControllerImpl.getInstance().switchMusic(songid);
+    }
+
 }
