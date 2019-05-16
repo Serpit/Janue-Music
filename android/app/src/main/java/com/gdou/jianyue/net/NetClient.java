@@ -1,11 +1,19 @@
 package com.gdou.jianyue.net;
 
+import android.app.DownloadManager;
+import android.content.Context;
+import android.net.Uri;
+import android.webkit.MimeTypeMap;
+
 import com.gdou.jianyue.BuildConfig;
+import com.gdou.jianyue.JanueMusicApplication;
+import com.gdou.jianyue.utils.FileUtils;
 import com.gdou.jianyue.utils.ObjectUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -68,4 +76,23 @@ public class NetClient {
         return retrofit.create(service);
     }
 
+    public Observable<Boolean> downloadMusic(String url,String filename){
+        try {
+            Uri uri = Uri.parse(url);
+            DownloadManager.Request request = new DownloadManager.Request(uri);
+            request.setTitle(filename);
+            request.setDescription("正在下载");
+            request.setDestinationInExternalPublicDir(FileUtils.getRelativeMusicDir(),filename);
+            request.setMimeType(MimeTypeMap.getFileExtensionFromUrl(url));
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
+            request.setAllowedOverRoaming(false); // 不允许漫游
+            DownloadManager downloadManager = (DownloadManager) JanueMusicApplication.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+            long id = downloadManager.enqueue(request);
+            return Observable.just(true);
+        } catch (Throwable th) {
+            th.printStackTrace();
+            return Observable.just(false);
+        }
+
+    }
 }

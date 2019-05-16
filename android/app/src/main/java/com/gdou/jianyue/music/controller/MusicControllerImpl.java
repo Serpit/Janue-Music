@@ -210,6 +210,9 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
     * 随机播放
     * */
     private void randomPlay(){
+        if (mMusicPlayList.getList().size()==1){
+            return;
+        }
         int max=mMusicPlayList.getList().size()-1;
         int min=0;
         Random random = new Random();

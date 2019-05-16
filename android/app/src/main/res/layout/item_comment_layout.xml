@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
+
+    <TextView
+        android:textColor="@color/red"
+        android:layout_marginTop="10dp"
+        android:id="@+id/tv_username"
+        android:text="小小"
+        android:textSize="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:text="这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听这首歌好好听"
+        android:id="@+id/tv_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <View
+        android:background="@color/code_color_1"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+</LinearLayout>

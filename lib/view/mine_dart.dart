@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:jian_yue/constant/constant.dart';
 import 'recent_play_list_page.dart';
 import 'local_music_page.dart';
+import 'package:jian_yue/model/repository.dart';
+import 'package:jian_yue/utils/toast.dart';
+import 'collection_music_page.dart';
 class MinePage extends PageProvideNode{
   @override
   Widget buildContent(BuildContext context) {
@@ -22,9 +25,29 @@ class _MinePageContent extends StatefulWidget{
 
 class _MinePageContentState extends State<_MinePageContent> implements ItemPresenter<Null>{
   BuildContext _context;
+  UserRepo _repo;
+
+  bool _isLogin;
+
+  bool get isLogin => _isLogin;
+
+  set isLogin(bool value) {
+    _isLogin = value;
+  }
+  @override
+  void initState() {
+    super.initState();
+    _repo = UserRepo();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     _context = context;
+    _repo.getUserIsLogin().listen((value){
+      isLogin = value['sp_key_is_login'];
+    });
       return Material(
         child: Scaffold(
           body: ConstrainedBox(
@@ -82,6 +105,11 @@ class _MinePageContentState extends State<_MinePageContent> implements ItemPrese
         Navigator.push(_context, MaterialPageRoute(builder: (context)=>RecentPlayListPage()));
         break;
       case 'ACTION_COLLECTION':
+        if(isLogin){
+          Navigator.push(context,  MaterialPageRoute(builder: (context)=>CollectionMusicPage()));
+        }else{
+          Toast.show('您还没有登陆！', context);
+        }
         break;
       case 'ACTION_DOWNLOAD':
         break;

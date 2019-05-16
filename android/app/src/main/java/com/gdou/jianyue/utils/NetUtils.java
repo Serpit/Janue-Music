@@ -22,4 +22,19 @@ public class NetUtils {
         }
         return false;
     }
+
+
+    public static boolean isWifiConnected(Context context){
+        if (!isNetworkAvailable(context)){
+            return  false;
+        }
+        ConnectivityManager connectivityManager =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        boolean avilable = networkInfo.isAvailable();
+        NetworkInfo.State state = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() ;
+        if (NetworkInfo.State.CONNECTED == state){
+            return true;
+        }
+        return false;
+    }
 }

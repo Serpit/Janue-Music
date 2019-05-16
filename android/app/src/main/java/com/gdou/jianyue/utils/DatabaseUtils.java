@@ -1,9 +1,13 @@
 package com.gdou.jianyue.utils;
 
 import com.gdou.jianyue.JanueMusicApplication;
+import com.gdou.jianyue.databasetable.CollectionMusic;
 import com.gdou.jianyue.databasetable.PlayingMusic;
 import com.gdou.jianyue.databasetable.RecentMusic;
+import com.gdou.jianyue.greendao.CollectionMusicDao;
 import com.gdou.jianyue.greendao.DaoSession;
+
+import org.greenrobot.greendao.query.Query;
 
 import java.util.List;
 
@@ -87,4 +91,18 @@ public class DatabaseUtils {
     }
 
 
+    public static void insertAllCollection(List<CollectionMusic> musics){
+        for (CollectionMusic music : musics) {
+            if (ObjectUtils.isNull(JanueMusicApplication.getDaoSession().getCollectionMusicDao().load(music.getCollectionid()))){
+                JanueMusicApplication.getDaoSession().getCollectionMusicDao().insert(music);
+            }
+        }
+    }
+
+    public static boolean queryIsCollect(long songid,long userid){
+        Query query = JanueMusicApplication.getDaoSession().getCollectionMusicDao().queryBuilder().where(CollectionMusicDao.Properties.Songid.eq(songid),
+                CollectionMusicDao.Properties.Userid.eq(userid)).build();
+        List<CollectionMusic> list = query.list();
+        return !query.list().isEmpty();
+    }
 }

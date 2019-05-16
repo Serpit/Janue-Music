@@ -1,5 +1,8 @@
 package com.gdou.jianyue.music.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -9,10 +12,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.JanueMusicApplication;
@@ -44,7 +47,7 @@ import com.hw.lrcviewlib.LrcView;
 import java.io.File;
 import java.util.List;
 
-public class MusicPlayerActivity extends BaseMusicActivity implements View.OnClickListener,
+public class MusicPlayerActivity extends BaseActivity implements View.OnClickListener,
         MusicControlBar.OnMusicControlEvent, MainMusicContract.View,
         MusicController.OnMusicStateChangeListener, MusicController.OnMusicPositionChangeListener,
         MusicController.OnMusicChangeListener, PlayingListView.OnDeletePlayingListListener {
@@ -55,13 +58,13 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
     private PlayingListView playingListView;
     private MusicControlBar mMusicControlBar;
     private LrcView mLrcView;
-    private ImageView iv_music_main_bg,iv_play_mode,iv_play_list;
+    private ImageView iv_music_main_bg,iv_play_mode,iv_play_list,iv_collect,iv_download,iv_more,iv_comment;
     private List<LrcRow> mLrcRows;
     private RotateImageView iv_album;
     private SeekBar mMusicPositionBar;
     private MusicService.MusicBinder mBinder;
     private TextView tv_current_positon,tv_music_duration;
-    private boolean isPlaying = false;
+    private boolean isPlaying ,isCollect;
     private MainMusicContract.Presenter mPresenter;
     private MusicPlayList mMusicPlayList = MusicPlayList.getInstance();
     private MusicController mController = MusicControllerImpl.getInstance();
@@ -92,13 +95,16 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mMusicControlBar = findViewById(R.id.musicControlBarId);
         mLrcView = findViewById(R.id.au_lrcView);
         iv_music_main_bg = findViewById(R.id.iv_music_main_bg);
+        iv_comment = findViewById(R.id.iv_comment);
         mMusicPositionBar = findViewById(R.id.pb_music_position_bar);
         tv_current_positon = findViewById(R.id.tv_current_positon);
         tv_music_duration = findViewById(R.id.tv_music_duration);
         iv_play_mode = findViewById(R.id.iv_play_mode);
         iv_play_list = findViewById(R.id.iv_play_list);
         playingListView = new PlayingListView(this);
-
+        iv_collect = findViewById(R.id.iv_collect);
+        iv_more = findViewById(R.id.iv_more);
+        iv_download = findViewById(R.id.iv_download);
     }
     @Override
     public void initViews() {
@@ -147,10 +153,13 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mMusicToolBar.setShareOnClickListener(this);
         mMusicControlBar.setIsPlaying(isPlaying);
         mMusicControlBar.setOnMusicControlEvent(this);
+        iv_comment.setOnClickListener(this);
         iv_album.setOnClickListener(this);
         iv_play_mode.setOnClickListener(this);
         iv_play_list.setOnClickListener(this);
-
+        iv_collect.setOnClickListener(this);
+        iv_download.setOnClickListener(this);
+        iv_more.setOnClickListener(this);
         mLrcView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,7 +191,9 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mPresenter = new MainMusicPresenter();
         mPresenter.attachView(this);
         mPresenter.loadPlayingMusicInfo(mSongId);
-
+        if (SPUtils.getBoolean(Constants.SP_KEY_IS_LOGIN)){
+            mPresenter.queryIsCollect(mSongId);
+        }
         mController.setOnMusicStartAndStopListener(this);
         mController.setOnMusicPositionChangeListener(this);
         mController.setOnMusicChangeListener(this);
@@ -204,6 +215,19 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
             case R.id.iv_share:
                 ShareProxy.getInstance().shareText(this,"musicName: "+mSongName);
                 break;
+            case R.id.iv_collect:
+                changeCollect();
+                break;
+            case R.id.iv_download:
+                mPresenter.downloadMusic(mSongId);
+                break;
+            case R.id.iv_comment:
+                Intent intent = new Intent(MusicPlayerActivity.this,CommentActivity.class);
+                intent.putExtra(Constants.SONG_ID,mSongId);
+                startActivity(intent);
+                break;
+            case R.id.iv_more:
+                break;
         }
     }
 
@@ -216,7 +240,6 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
             }else {
                 if (ObjectUtils.isNull(mMusicPlayList.getCurMusic().getDownloadLink())){
                     mBinder.switchMusic(mSongId);
-                    iv_album.startRotate();
                 }else {
                     mBinder.startMusic();
                     mMusicPositionBar.setMax(mController.getMusicDuration());
@@ -275,10 +298,7 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mController.setPlayMode(currentMode);
 
     }
-    @Override
-    public void initMusicList() {
 
-    }
 
     @Override
     public void startAndStop() {
@@ -332,7 +352,6 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
 
     @Override
     public void onMusicPositionChange(int position) {
-        Log.d("MusicPlayerActivity","current position :" + position);
         tv_current_positon.setText(TimeUtils.generateTime(position));
         mMusicPositionBar.setProgress(position);
         mLrcView.smoothScrollToTime((long) position);
@@ -364,5 +383,75 @@ public class MusicPlayerActivity extends BaseMusicActivity implements View.OnCli
         mMusicPlayList.clearPlayingList();
         mBinder.resetPlayer();
         finish();
+    }
+
+
+    private void changeCollect(){
+        if (isCollect){
+            iv_collect.setBackground(getResources().getDrawable(R.drawable.ic_collected));
+            mPresenter.cancelCollectMusic(mSongId);
+
+        }else {
+            iv_collect.setBackground(getResources().getDrawable(R.drawable.ic_have_collected));
+
+            mPresenter.collectMusic(mSongId);
+        }
+
+    }
+
+    @Override
+    public void onIsNotLogin() {
+         Toast.makeText(this,"你还没有登陆，请前去登陆",Toast.LENGTH_SHORT).show();
+        iv_collect.setBackground(getResources().getDrawable(R.drawable.ic_collected));
+    }
+
+    @Override
+    public void onError(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        iv_collect.setBackground(getResources().getDrawable(R.drawable.ic_collected));
+    }
+
+    @Override
+    public void onSuccess(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        isCollect = !isCollect;
+    }
+
+    @Override
+    public void onDownloadSuccess() {
+        Toast.makeText(this,"下载成功！",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDownlaodFaild(String msg) {
+        Toast.makeText(this,"下载失败: "+msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onIsCollect(boolean isCollect) {
+        this.isCollect = isCollect;
+        if(isCollect){
+            iv_collect.setBackground(getResources().getDrawable(R.drawable.ic_have_collected));
+        }
+    }
+
+    @Override
+    public void onRefuseDownload() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage("您已设置移动网络下不可下载，请到设置中打开移动网络下载功能");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.show();
     }
 }

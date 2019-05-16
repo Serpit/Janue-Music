@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".music.view.CommentActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_commentlist"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:layout_above="@id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <RelativeLayout
+        android:id="@+id/ll"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <EditText
+            android:textCursorDrawable="@drawable/cursor_comment"
+            android:hint="风来了又走，就让你的思绪留在这吧"
+            android:textSize="15sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@null"
+            android:layout_toLeftOf="@id/bt_submit"
+            android:id="@+id/et_comment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <TextView
+
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:id="@+id/bt_submit"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentEnd="true"
+            android:text="发送"
+            android:layout_width="70dp"
+            android:layout_height="50dp" />
+    </RelativeLayout>
+
+</RelativeLayout>

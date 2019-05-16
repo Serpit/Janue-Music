@@ -3,13 +3,52 @@ import 'package:jian_yue/constant/constant.dart';
 import 'package:jian_yue/utils/net_utils.dart';
 import 'package:jian_yue/utils/method_channel_utils.dart';
 import 'package:jian_yue/constant/constant.dart';
+import 'dart:async';
+
+
 class MusicService{
   Observable searchMusic(Map<String,String> params) => get("",params);
-  Observable  getBillList(Map<String,dynamic> params) => get("", params);
+  Observable getBillList(Map<String,dynamic> params) => get("", params);
+  Observable getCollectionList(String url ) => get(url,{});
 }
 
 class ImageService{
   Observable getSplashUrl() => get(Constants.SPLASH_URL, {});
+}
+class UserService{
+  Observable login(Map<String,String> params) => post(Constants.LOGIN_URL, params);
+  Observable register(Map<String,String> params) => post(Constants.REGISTER_URL, params);
+  Observable getCollectionList(String url ) => get(url,{});
+}
+
+class UserRepo{
+  final UserService remote;
+  UserRepo({this.remote});
+  
+  Observable getUserIsLogin(){
+    Future future = callNativeMethod(Constants.USER_CHANNEL, 'getUserIsLogin');
+    return Observable.fromFuture(future);
+  }
+
+  Observable getCollectionList(String userid)  {
+    String url ="${ Constants.COLLECTION_URL}${userid}";
+    return  remote.getCollectionList(url);
+  }
+  Observable login(String username,String password){
+    Map<String, String> params = {
+      Constants.PARAM_USERNAME: username,
+      Constants.PARAM_PASSWORD: password
+    };
+    return  remote.login(params);
+  }
+
+  Observable register(String username,String password){
+    Map<String, String> params = {
+      Constants.PARAM_USERNAME: username,
+      Constants.PARAM_PASSWORD: password
+    };
+    return  remote.register(params);
+  }
 }
 
 class MusicRepo {
@@ -21,6 +60,12 @@ class MusicRepo {
 
 
     MusicRepo({this.remote});
+
+
+  Observable getCollectionList(String userid)  {
+    String url ="${ Constants.COLLECTION_URL}${userid}";
+    return  remote.getCollectionList(url);
+  }
 
   Observable getCurIndex(){
     Future future = callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'getCurIndex');

@@ -14,6 +14,11 @@ public class Constants {
     public static final String PLAY_MODE_SHUFFLE = "play_mode_shuffle";
 
     public static final String METHOD_GET_MUSIC_INFO = "baidu.ting.song.play";
-
-
+    public static final String SP_kEY_NET_PLAY = "sp_key_net_play";
+    public static final String SP_kEY_NET_DOWNLOAD = "sp_key_net_download";
+    public static final String SP_kEY_USER_ID = "sp_key_user_id";
+    public static final String SP_KEY_IS_LOGIN = "sp_key_is_login";
+    public static final String SP_KEY_USER_NAME = "sp_key_username";
+    private static final String IP = "192.168.1.102";
+    public static final String BASE_URL = "http://"+IP+":8899/janue_music_web";
 }

@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.gdou.jianyue.music.controller.MusicController;
 
-public abstract class BaseMusicActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
 
 
@@ -16,12 +16,12 @@ public abstract class BaseMusicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-        initMusicList();
+
     }
 
     public abstract void initViews();
     public abstract void findViews();
-    public abstract void initMusicList();
+
     public abstract void initData();
 
 

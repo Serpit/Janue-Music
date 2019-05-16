@@ -18,7 +18,7 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
     private static final  String METHOD_INSERT = "insertPlaying";
     private static final  String METHOD_QUERY = "queryRecent";
     private static final  String METHOD_DELETE = "update";
-
+    private static final  String METHOD_INSERT_COLLECTION = "insertCollection";
     private Context mContext;
 
     public DatabasePlugin(Context mContext) {
@@ -29,10 +29,12 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
         switch (methodCall.method){
             case METHOD_QUERY:
-
                 MethodProxy.queryAllRecentMusic(result);
                 break;
             case METHOD_DELETE:
+                break;
+            case METHOD_INSERT_COLLECTION:
+                MethodProxy.insertCollection(methodCall);
                 break;
             case METHOD_INSERT:
                 Log.d(TAG,methodCall.arguments.toString());

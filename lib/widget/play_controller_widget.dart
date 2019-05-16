@@ -7,7 +7,6 @@ import 'dart:convert';
 class PlayControllerWidget extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
-    
     return _PlayControllerWidgetState();
   }
 
@@ -62,7 +61,7 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
     });
     _repo.getCurIndex().listen((value){
       curIndex = value;
-      print('page : ${value}');
+
     });
     return InkWell(
       onTap: onTab,

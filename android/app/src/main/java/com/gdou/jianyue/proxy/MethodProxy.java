@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.JanueMusicApplication;
+import com.gdou.jianyue.databasetable.CollectionMusic;
 import com.gdou.jianyue.databasetable.PlayingMusic;
 import com.gdou.jianyue.databasetable.RecentMusic;
 import com.gdou.jianyue.loacalmusic.LocalMusicProxy;
@@ -22,11 +23,15 @@ import com.gdou.jianyue.music.model.MainMusicModel;
 import com.gdou.jianyue.music.service.MusicService;
 import com.gdou.jianyue.music.view.MusicPlayerActivity;
 import com.gdou.jianyue.utils.DatabaseUtils;
+import com.gdou.jianyue.utils.SPUtils;
 import com.gdou.jianyue.utils.TextUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -158,5 +163,56 @@ public class MethodProxy {
     public static void getCurIndex(MethodChannel.Result result){
        // Log.d(TAG,MusicPlayList.getInstance().getCurrentIndex()+"");
         result.success(MusicPlayList.getInstance().getCurrentIndex());
+    }
+
+
+    public static void saveUserInfo(MethodCall methodCall){
+        SPUtils.saveString(Constants.SP_kEY_USER_ID, methodCall.argument("userid"));
+        SPUtils.saveBoolean(Constants.SP_KEY_IS_LOGIN,true);
+        SPUtils.saveString(Constants.SP_KEY_USER_NAME,methodCall.argument("username"));
+    }
+
+    public static void getUserIsLogin(MethodChannel.Result result){
+        Map<String,Object> map = new HashMap<>();
+        map.put(Constants.SP_KEY_IS_LOGIN,SPUtils.getBoolean(Constants.SP_KEY_IS_LOGIN));
+        map.put(Constants.SP_kEY_USER_ID,SPUtils.getString(Constants.SP_kEY_USER_ID));
+        map.put(Constants.SP_KEY_USER_NAME,SPUtils.getString(Constants.SP_KEY_USER_NAME));
+        result.success(map);
+    }
+
+    public static void logout(){
+        SPUtils.saveBoolean(Constants.SP_KEY_IS_LOGIN,false);
+    }
+
+    public static void getUserId(MethodChannel.Result result){
+        Map<String ,String> map = new HashMap<>();
+        map.put(Constants.SP_kEY_USER_ID,SPUtils.getString(Constants.SP_kEY_USER_ID));
+        result.success(map);
+    }
+
+    public static void insertCollection(MethodCall methodCall){
+       //List<CollectionMusic> musics = (List<CollectionMusic>) methodCall.argument("collection");
+       Log.d(TAG,methodCall.argument("collection"));
+       String json = methodCall.argument("collection");
+        Gson gson = new Gson();
+
+        List<CollectionMusic> musics  = gson.fromJson(json,new TypeToken<List<CollectionMusic>>(){}.getType());
+       DatabaseUtils.insertAllCollection(musics);
+    }
+
+    public static void getSettingInfo(MethodChannel.Result result){
+        Map<String,Boolean> map = new HashMap<>();
+        map.put(Constants.SP_kEY_NET_PLAY,SPUtils.getBoolean(Constants.SP_kEY_NET_PLAY));
+        map.put(Constants.SP_kEY_NET_DOWNLOAD,SPUtils.getBoolean(Constants.SP_kEY_NET_DOWNLOAD));
+        result.success(map);
+    }
+
+    public static void setMobilePlayEnable(MethodCall methodCall){
+        Boolean value = methodCall.argument(Constants.SP_kEY_NET_PLAY);
+        SPUtils.saveBoolean(Constants.SP_kEY_NET_PLAY,value);
+    }
+    public static void setMobileDownloadEnable(MethodCall methodCall){
+        Boolean value = methodCall.argument(Constants.SP_kEY_NET_DOWNLOAD);
+        SPUtils.saveBoolean(Constants.SP_kEY_NET_DOWNLOAD,value);
     }
 }
