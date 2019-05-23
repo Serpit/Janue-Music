@@ -44,6 +44,7 @@ public interface MainMusicContract {
         void cancelCollectMusic(long songId);
         void queryIsCollect(long songid);
         void downloadMusic(long songId);
+        void share(String msg);
     }
 
 }

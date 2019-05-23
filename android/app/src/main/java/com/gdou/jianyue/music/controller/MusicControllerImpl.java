@@ -6,11 +6,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.gdou.jianyue.Constants.Constants;
+import com.gdou.jianyue.event.MusicEvent;
 import com.gdou.jianyue.music.MusicPlayList;
 import com.gdou.jianyue.music.bean.SongResultBean;
 import com.gdou.jianyue.music.model.MainMusicModel;
 import com.gdou.jianyue.utils.DatabaseUtils;
 import com.gdou.jianyue.utils.ObjectUtils;
+import com.gdou.jianyue.utils.RxBus;
 import com.gdou.jianyue.utils.SPUtils;
 
 import java.io.IOException;
@@ -96,7 +98,7 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
         if (ObjectUtils.isNotNull(musicChangeListener)){
             musicChangeListener.onMusicChange(mMusicPlayList.getMusicIndexBySongId(songid));
         }
-
+        RxBus.getInstance().post(new MusicEvent(mMusicPlayList.getMusicIndexBySongId(songid)));
     }
 
     @Override
@@ -177,6 +179,7 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
                 if (ObjectUtils.isNotNull(musicChangeListener)){
                     musicChangeListener.onMusicChange(mMusicPlayList.getCurrentIndex());
                 }
+                RxBus.getInstance().post(new MusicEvent(mMusicPlayList.getCurrentIndex()));
                 break;
             case "play_mode_shuffle":
                 randomPlay();
@@ -198,6 +201,7 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
                 if(ObjectUtils.isNotNull(musicChangeListener)){
                     musicChangeListener.onMusicChange(mMusicPlayList.getCurrentIndex());
                 }
+                RxBus.getInstance().post(new MusicEvent(mMusicPlayList.getCurrentIndex()));
                 break;
             case "play_mode_shuffle":
                 randomPlay();
@@ -227,6 +231,7 @@ public class MusicControllerImpl implements MusicController, MediaPlayer.OnBuffe
                 if (ObjectUtils.isNotNull(musicChangeListener)){
                     musicChangeListener.onMusicChange(mMusicPlayList.getCurrentIndex());
                 }
+                RxBus.getInstance().post(new MusicEvent(mMusicPlayList.getCurrentIndex()));
                 break;
             }
         }

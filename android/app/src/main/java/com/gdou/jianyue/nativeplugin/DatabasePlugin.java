@@ -19,6 +19,9 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
     private static final  String METHOD_QUERY = "queryRecent";
     private static final  String METHOD_DELETE = "update";
     private static final  String METHOD_INSERT_COLLECTION = "insertCollection";
+    private static final  String METHOD_DELETE_DOWNLOAD_MUSIC_ON_LIST = "deleteDownloadMusicOnList";
+    private static final  String METHOD_DELETE_DOWNLOAD_MUSIC = "deleteDownloadMusic";
+    private static final String METHOD_QUERY_DOWNLOAD_MUSIC = "queryDownload";
     private Context mContext;
 
     public DatabasePlugin(Context mContext) {
@@ -46,7 +49,15 @@ public class DatabasePlugin implements MethodChannel.MethodCallHandler {
                 MethodProxy.startMusicActivity((FlutterActivity)mContext,musicBundle);
                 result.success(null);
                 break;
-
+            case METHOD_QUERY_DOWNLOAD_MUSIC:
+                MethodProxy.queryDownloadMusic(result);
+                break;
+            case METHOD_DELETE_DOWNLOAD_MUSIC:
+                MethodProxy.deleteDownloadMusic(methodCall);
+                break;
+            case METHOD_DELETE_DOWNLOAD_MUSIC_ON_LIST:
+                MethodProxy.deleteDownloadMusicOnList(methodCall);
+                break;
         }
     }
 

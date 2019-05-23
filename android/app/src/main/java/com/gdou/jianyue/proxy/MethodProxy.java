@@ -11,6 +11,7 @@ import android.util.Log;
 import com.gdou.jianyue.Constants.Constants;
 import com.gdou.jianyue.JanueMusicApplication;
 import com.gdou.jianyue.databasetable.CollectionMusic;
+import com.gdou.jianyue.databasetable.DownloadMusic;
 import com.gdou.jianyue.databasetable.PlayingMusic;
 import com.gdou.jianyue.databasetable.RecentMusic;
 import com.gdou.jianyue.loacalmusic.LocalMusicProxy;
@@ -23,6 +24,7 @@ import com.gdou.jianyue.music.model.MainMusicModel;
 import com.gdou.jianyue.music.service.MusicService;
 import com.gdou.jianyue.music.view.MusicPlayerActivity;
 import com.gdou.jianyue.utils.DatabaseUtils;
+import com.gdou.jianyue.utils.FileUtils;
 import com.gdou.jianyue.utils.SPUtils;
 import com.gdou.jianyue.utils.TextUtils;
 import com.google.gson.Gson;
@@ -30,11 +32,13 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -217,7 +221,52 @@ public class MethodProxy {
     }
 
     public static void playLocalMusic(MethodCall methodCall,Context context){
-        String  songid = methodCall.argument("songid");
-        LocalMusicProxy.getInstance().playLocalMusic(Long.parseLong(songid),context);
+        long songid = Long.parseLong(methodCall.argument("songid"));
+        LocalMusicProxy.getInstance().playLocalMusic(context);
+        PlayingMusic music = MusicPlayList.getInstance().getMusciBySongId(songid);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constants.SONG_ID,songid);
+        bundle.putString(Constants.ARTISTS,music.getAuthor());
+        bundle.putString(Constants.SONG_NAME,music.getTitle());
+        startMusicActivity((Activity) context,bundle);
+    }
+
+    public static void queryDownloadMusic(MethodChannel.Result result){
+        List<DownloadMusic> list = DatabaseUtils.queryAllDownloadMusic();
+        Log.d(TAG,list.size()+"");
+
+        Iterator<DownloadMusic> iterator = list.iterator();
+        while (iterator.hasNext()){
+            String path = iterator.next().getPath();
+            if (!FileUtils.isFileExists(path)){
+                iterator.remove();
+            }
+        }
+
+        List<BaseSongInfo> songInfoList = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            BaseSongInfo songInfo = new BaseSongInfo();
+            DownloadMusic recentMusic =  list.get(i);
+            songInfo.setSongid(recentMusic.getSongId());
+            songInfo.setSongname(recentMusic.getTitle());
+            songInfo.setArtist(recentMusic.getAuthor());
+            songInfoList.add(songInfo);
+        }
+
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(songInfoList);
+        Log.d(TAG,jsonString);
+        result.success(jsonString);
+    }
+
+    public static void deleteDownloadMusic(MethodCall methodCall){
+        long songid = Long.parseLong(methodCall.argument("songid"));
+        DownloadMusic downloadMusic = DatabaseUtils.queryDownloadMusicById(songid);
+        FileUtils.deleteFile(downloadMusic.getPath());
+        DatabaseUtils.deleteDownloadMusic(songid);
+    }
+    public static void deleteDownloadMusicOnList(MethodCall methodCall){
+        long songid = Long.parseLong(methodCall.argument("songid"));
+        DatabaseUtils.deleteDownloadMusic(songid);
     }
 }

@@ -12,6 +12,7 @@ import com.gdou.jianyue.net.bean.BaseResponse;
 import com.gdou.jianyue.utils.DatabaseUtils;
 import com.gdou.jianyue.utils.NetUtils;
 import com.gdou.jianyue.utils.SPUtils;
+import com.gdou.share.ShareProxy;
 
 import java.io.File;
 
@@ -106,6 +107,11 @@ public class MainMusicPresenter implements MainMusicContract.Presenter {
         }
     }
 
+    @Override
+    public void share(String name) {
+        String msg = "我用简悦音乐分享了《"+name+"》,快前去收听吧！";
+        ShareProxy.getInstance().shareText((Activity)mView,msg);
+    }
 
     @Override
     public void downloadMusic(long songId) {

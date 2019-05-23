@@ -2,7 +2,7 @@ import 'package:dartin/dartin.dart';
 import 'package:dio/dio.dart';
 import 'package:jian_yue/constant/constant.dart';
 import 'package:jian_yue/model/repository.dart';
-//import 'package:jian_yue/viewmodel/demo_provide.dart';
+import 'package:jian_yue/viewmodel/download_list_page_provide.dart';
 import 'package:jian_yue/utils/sp_utils.dart';
 import 'package:jian_yue/model/repository.dart';
 import 'package:jian_yue/viewmodel/splash_provide.dart';
@@ -37,6 +37,7 @@ final localModule = Module([
 
 final viewModelModule = Module([
   //factory<HomeProvide>(({params}) => HomeProvide(params.get(0), get())),
+  factory<DownloadPageProvide>(({params})=>DownloadPageProvide(get())),
   factory<CollectionMusicProvide>(({params})=>CollectionMusicProvide(get())),
   factory<RegisterPageProvide>(({params})=>RegisterPageProvide(get())),
   factory<LoginPageProvide>(({params})=>LoginPageProvide(get())),

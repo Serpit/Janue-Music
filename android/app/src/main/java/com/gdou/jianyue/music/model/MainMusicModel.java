@@ -1,8 +1,10 @@
 package com.gdou.jianyue.music.model;
 
 
+import android.os.Environment;
 import android.util.Log;
 import com.gdou.jianyue.Constants.Constants;
+import com.gdou.jianyue.databasetable.DownloadMusic;
 import com.gdou.jianyue.databasetable.PlayingMusic;
 import com.gdou.jianyue.music.MusicPlayList;
 import com.gdou.jianyue.music.bean.SongResultBean;
@@ -52,6 +54,12 @@ public class MainMusicModel implements MainMusicContract.Model {
     public Observable<Boolean> downloadMusic(long songid) {
         PlayingMusic music = DatabaseUtils.queryPlayingMusicById(songid);
         String fileName = music.getAuthor() + " - " + music.getTitle()+".mp3";
+        DownloadMusic downloadMusic = new DownloadMusic();
+        downloadMusic.setSongId(music.getSongId());
+        downloadMusic.setTitle(music.getTitle());
+        downloadMusic.setAuthor(music.getAuthor());
+        downloadMusic.setPath(Environment.getExternalStorageDirectory()+"/"+FileUtils.getRelativeMusicDir()+"/"+fileName);
+        DatabaseUtils.insertDownloadMusic(downloadMusic);
         return NetClient.getInstance().downloadMusic(music.getDownloadLink(),fileName);
     }
 
@@ -87,4 +95,6 @@ public class MainMusicModel implements MainMusicContract.Model {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+
 }

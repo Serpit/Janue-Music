@@ -39,6 +39,12 @@ public class FileUtils {
         return file;
     }
 
+    public static void deleteFile(String path){
+        File file = new File(path);
+        if (file.exists()){
+            file.delete();
+        }
+    }
 
     public static File saveMusicFile(InputStream inputStream,String musicname,String artist){
         File file;

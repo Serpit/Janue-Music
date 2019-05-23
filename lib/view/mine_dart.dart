@@ -6,6 +6,7 @@ import 'local_music_page.dart';
 import 'package:jian_yue/model/repository.dart';
 import 'package:jian_yue/utils/toast.dart';
 import 'collection_music_page.dart';
+import 'package:jian_yue/view/download_list_page.dart';
 class MinePage extends PageProvideNode{
   @override
   Widget buildContent(BuildContext context) {
@@ -112,6 +113,7 @@ class _MinePageContentState extends State<_MinePageContent> implements ItemPrese
         }
         break;
       case 'ACTION_DOWNLOAD':
+        Navigator.push(_context, MaterialPageRoute(builder: (context)=>DownloadListPage()));
         break;
     }
   }

@@ -11,6 +11,7 @@ import com.gdou.jianyue.music.MusicPlayList;
 import com.gdou.jianyue.music.bean.BaseSongInfo;
 import com.gdou.jianyue.music.controller.MusicController;
 import com.gdou.jianyue.music.controller.MusicControllerImpl;
+import com.gdou.jianyue.nativeplugin.StartActivityPlugin;
 import com.gdou.jianyue.utils.DatabaseUtils;
 import com.gdou.jianyue.utils.ObjectUtils;
 
@@ -67,7 +68,7 @@ public class LocalMusicProxy {
         return baseSongInfoList;
     }
 
-    public  void playLocalMusic(long songid,Context context){
+    public  void playLocalMusic(Context context){
         //先进行删除操作
         DatabaseUtils.deleteAllPlayingMusic();
         //再将本地的音乐全部入库
@@ -80,11 +81,14 @@ public class LocalMusicProxy {
             playingMusic.setAuthor(list.get(i).getArtist());
             playingMusic.setTitle(list.get(i).getSongname());
             playingMusic.setSongId(list.get(i).getSongid());
+            playingMusic.setLrcLink("");
+            playingMusic.setPicLink("");
             playingMusicList.add(playingMusic);
         }
         DatabaseUtils.insertPlayingMusic(playingMusicList);
         MusicPlayList.getInstance().updateList();
-        MusicControllerImpl.getInstance().switchMusic(songid);
+        //重置curIndex
+        MusicPlayList.getInstance().setCurrentIndex(0);
     }
 
 }

@@ -88,6 +88,11 @@ class MusicRepo {
      return Observable.fromFuture(future);
 
   }
+  
+  Observable loadDownloadMusicList(){
+    Future future = callNativeMethod(Constants.DATA_BASE_CHANNEL, 'queryDownload');
+    return Observable.fromFuture(future);
+  }
 
   Observable getIsPlaying(){
     Future future = callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'getIsPlaying');

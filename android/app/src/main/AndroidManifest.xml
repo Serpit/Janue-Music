@@ -25,12 +25,6 @@
             android:name=".music.receiver.PlayActionReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="play" /> <!-- 定制play广播 -->
-                <action android:name="last" /> <!-- 定制last广播 -->
-                <action android:name="next" /> <!-- ...... -->
-                <action android:name="pause" />
-            </intent-filter>
         </receiver>
 
         <service

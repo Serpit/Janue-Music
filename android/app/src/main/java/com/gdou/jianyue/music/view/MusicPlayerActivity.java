@@ -5,11 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +38,6 @@ import com.gdou.jianyue.widget.MusicControlBar;
 import com.gdou.jianyue.widget.MusicToolBar;
 import com.gdou.jianyue.widget.PlayingListView;
 import com.gdou.jianyue.widget.RotateImageView;
-import com.gdou.share.ShareProxy;
 import com.hw.lrcviewlib.LrcDataBuilder;
 import com.hw.lrcviewlib.LrcRow;
 import com.hw.lrcviewlib.LrcView;
@@ -58,7 +56,8 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     private PlayingListView playingListView;
     private MusicControlBar mMusicControlBar;
     private LrcView mLrcView;
-    private ImageView iv_music_main_bg,iv_play_mode,iv_play_list,iv_collect,iv_download,iv_more,iv_comment;
+    private ImageView iv_music_main_bg,iv_play_mode,iv_play_list,iv_collect,iv_download,iv_comment;
+    private RelativeLayout rl_container;
     private List<LrcRow> mLrcRows;
     private RotateImageView iv_album;
     private SeekBar mMusicPositionBar;
@@ -90,6 +89,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void findViews(){
+        rl_container = findViewById(R.id.rl_container);
         mMusicToolBar = findViewById(R.id.toolbar);
         iv_album = findViewById(R.id.iv_album);
         mMusicControlBar = findViewById(R.id.musicControlBarId);
@@ -103,7 +103,6 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
         iv_play_list = findViewById(R.id.iv_play_list);
         playingListView = new PlayingListView(this);
         iv_collect = findViewById(R.id.iv_collect);
-        iv_more = findViewById(R.id.iv_more);
         iv_download = findViewById(R.id.iv_download);
     }
     @Override
@@ -125,7 +124,6 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
         mMusicPositionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Log.d("onProgressChanged","onProgressChanged: "+i);
                 if (mController.isParpred()){
                     int time = mController.getMusicDuration();
                     int position =  time/100 * i;
@@ -159,13 +157,12 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
         iv_play_list.setOnClickListener(this);
         iv_collect.setOnClickListener(this);
         iv_download.setOnClickListener(this);
-        iv_more.setOnClickListener(this);
         mLrcView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AnimationUtils.fadeOut(mLrcView);
                 AnimationUtils.fadeIn(iv_album);
-
+                AnimationUtils.fadeIn(rl_container);
             }
         });
         mLrcView.getLrcSetting()
@@ -203,6 +200,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
         switch (view.getId()){
             case R.id.iv_album:
                 AnimationUtils.fadeIn(mLrcView);
+                AnimationUtils.fadeOut(rl_container);
                 AnimationUtils.fadeOut(iv_album);
                 break;
             case R.id.iv_play_mode:
@@ -213,7 +211,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
                 playingListView.showAtLocation(this.findViewById(R.id.rootlayout), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,0);
                 break;
             case R.id.iv_share:
-                ShareProxy.getInstance().shareText(this,"musicName: "+mSongName);
+                mPresenter.share(mSongName);
                 break;
             case R.id.iv_collect:
                 changeCollect();
@@ -225,8 +223,6 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
                 Intent intent = new Intent(MusicPlayerActivity.this,CommentActivity.class);
                 intent.putExtra(Constants.SONG_ID,mSongId);
                 startActivity(intent);
-                break;
-            case R.id.iv_more:
                 break;
         }
     }

@@ -27,16 +27,19 @@
         android:visibility="gone"
         android:id="@+id/au_lrcView"
         android:layout_above="@id/ll"
+        android:layout_marginTop="10dp"
         android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <RelativeLayout
+        android:id="@+id/rl_container"
         android:layout_marginBottom="10dp"
         android:layout_above="@id/ll"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
+
             android:id="@+id/iv_collect"
             android:layout_marginStart="20dp"
             android:background="@drawable/ic_collected"
@@ -44,23 +47,18 @@
             android:layout_height="30dp" />
         <ImageView
             android:id="@+id/iv_download"
-            android:layout_marginStart="120dp"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/ic_download"
             android:layout_width="30dp"
             android:layout_height="30dp" />
         <ImageView
-            android:layout_marginStart="240dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
             android:id="@+id/iv_comment"
             android:background="@drawable/ic_comment"
             android:layout_width="30dp"
             android:layout_height="30dp" />
-        <ImageView
-            android:id="@+id/iv_more"
-            android:layout_marginEnd="20dp"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/ic_more"
-            android:layout_width="30dp"
-            android:layout_height="30dp" />
+
     </RelativeLayout>
     <LinearLayout
         android:layout_marginTop="10dp"

@@ -57,12 +57,12 @@ class _SearchPageContentState extends State<_SearchPageContent>{
               }),
 
         ),
-        body: mProvide.loading?Center(child: Text('加载中...'),):ListView.separated(itemBuilder: (context,index)=>buidListWidget(index,mProvide.response.song[index]), separatorBuilder: (context,index)=> Divider(height: 1,color: Colors.grey,), itemCount:mProvide.response==null?0: mProvide.response.song.length),
-        ),
+        body: mProvide.loading?Center(child: Text('加载中...'),):buildContent()
+               ),
       )
     );
   }
-  Widget buidListWidget(int position,Song searchResult){
+  Widget buidListItem(int position,Song searchResult){
     return InkWell(
       onTap:()=> onItemOnClick(position,searchResult),
       child: Container(
@@ -99,6 +99,17 @@ class _SearchPageContentState extends State<_SearchPageContent>{
     );
   }
 
+  Widget buildContent(){
+      if(mProvide.response==null||mProvide.response.song==null){
+        return Center(
+          child: Text(
+            '暂无搜索结果'
+          ),
+        );
+      }
+      return ListView.separated(itemBuilder: (context,index)=>buidListItem(index,mProvide.response.song[index]), separatorBuilder: (context,index)=> Divider(height: 1,color: Colors.grey,), itemCount:(mProvide.response==null||mProvide.response.song==null)?0: mProvide.response.song.length);
+
+  }
   void onItemMoreOnClick(int position){
     print("item more click");
   }

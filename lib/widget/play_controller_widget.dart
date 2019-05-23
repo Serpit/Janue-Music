@@ -3,6 +3,7 @@ import 'package:jian_yue/constant/constant.dart';
 import 'package:jian_yue/utils/method_channel_utils.dart';
 import 'package:jian_yue/model/repository.dart';
 import 'package:jian_yue/bean/base_play_list_bean.dart';
+import 'package:jian_yue/utils/event_channel_utils.dart';
 import 'dart:convert';
 class PlayControllerWidget extends StatefulWidget{
   @override
@@ -19,13 +20,18 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
   MusicRepo _repo;
    bool _isPlaying  = false;
   List<BasePlayListItemInfo> _response;
-  int _curIndex;
+  PageController _pageController = PageController();
+  bool _justPageChange = false;
   @override
   void initState() {
 
     super.initState();
     _repo = MusicRepo();
-
+    onNativeCall(Constants.MUSIC_EVENT_CHANNEL, (position){
+      print('Controller: ${position}');
+      _justPageChange = true;
+      _pageController.animateToPage(position,duration: Duration(milliseconds: 20),curve: Curves.ease);
+    });
   }
 
   set isPlaying(bool value) {
@@ -36,12 +42,7 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
   }
 
 
-  set curIndex(int value) {
-    _curIndex = value;
-    setState(() {
 
-    });
-  }
 
   set response(List<BasePlayListItemInfo> value) {
     _response = value;
@@ -49,6 +50,7 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
 
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +61,7 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
       List list =  json.decode(value);
       response = getMusicList(list);
     });
-    _repo.getCurIndex().listen((value){
-      curIndex = value;
 
-    });
     return InkWell(
       onTap: onTab,
       child: Container(
@@ -75,7 +74,7 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
             Positioned(
 
               child: PageView.builder(
-                controller: PageController(initialPage: _curIndex),
+                controller: _pageController,
                 itemCount: _response==null ?0 :_response.length,
                 itemBuilder: (context,index)=>buildPlayingListItem(index),
                 onPageChanged:(position)=> onChangeMusic(position),
@@ -154,7 +153,11 @@ class _PlayControllerWidgetState extends State<PlayControllerWidget>{
   }
 
   void onChangeMusic(int position){
+    if(_justPageChange){
+      _justPageChange = false;
+    }else{
+      callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'switchMusic',params: {'songId':'${_response[position].songid}'});
 
-    callNativeMethod(Constants.MUSIC_CONTROL_CHANNEL, 'switchMusic',params: {'songId':'${_response[position].songid}'});
+    }
   }
 }

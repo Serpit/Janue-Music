@@ -2,6 +2,7 @@ package com.gdou.jianyue.utils;
 
 import com.gdou.jianyue.JanueMusicApplication;
 import com.gdou.jianyue.databasetable.CollectionMusic;
+import com.gdou.jianyue.databasetable.DownloadMusic;
 import com.gdou.jianyue.databasetable.PlayingMusic;
 import com.gdou.jianyue.databasetable.RecentMusic;
 import com.gdou.jianyue.greendao.CollectionMusicDao;
@@ -82,7 +83,6 @@ public class DatabaseUtils {
     }
     public static List<PlayingMusic> queryAllPlayingMusic(){
         return JanueMusicApplication.getDaoSession().getPlayingMusicDao().loadAll();
-       // return  daoSession.getPlayingMusicDao().loadAll();
     }
 
 
@@ -113,4 +113,22 @@ public class DatabaseUtils {
         List<CollectionMusic> list = query.list();
         return !query.list().isEmpty();
     }
+
+    public static void insertDownloadMusic(DownloadMusic downloadMusic){
+        JanueMusicApplication.getDaoSession().getDownloadMusicDao().insert(downloadMusic);
+    }
+    public static DownloadMusic queryDownloadMusicById(long songid){
+       return JanueMusicApplication.getDaoSession().getDownloadMusicDao().load(songid);
+    }
+
+    public static void deleteDownloadMusic(long songid){
+        JanueMusicApplication.getDaoSession().getDownloadMusicDao().deleteByKey(songid);
+    }
+
+    public static List<DownloadMusic> queryAllDownloadMusic(){
+        return JanueMusicApplication.getDaoSession().getDownloadMusicDao().loadAll();
+    }
+
+
+
 }

@@ -35,5 +35,5 @@ class Constants{
   static final String MUSIC_CONTROL_CHANNEL = "janeMusic.flutter.io/controlMusic";
   static final String USER_CHANNEL = "janeMusic.flutter.io/user";
 
-
+  static final String  MUSIC_EVENT_CHANNEL = "janeMusic.flutter.io/musicEventChannel";
 }

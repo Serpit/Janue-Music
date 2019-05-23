@@ -41,7 +41,6 @@ class _MusicListContentState extends State<_MusicListContent> with SingleTickerP
   @override
   void initState() {
     super.initState();
-    ;
   }
   void loadBillList(){
     listData.forEach((item){
@@ -94,7 +93,6 @@ class _MusicListContentState extends State<_MusicListContent> with SingleTickerP
 class MuiscBillItemWidget extends StatelessWidget implements ItemPresenter<MusicListItem>{
   final int position;
   BuildContext mContext;
- // MuiscBillItemWidget(this.position);
   final MusicListInfo info;
   final bool isLoading;
   MuiscBillItemWidget(this.position, this.info,this.isLoading);
@@ -154,8 +152,7 @@ class MuiscBillItemWidget extends StatelessWidget implements ItemPresenter<Music
                 margin: EdgeInsets.only(top: 4),
                 child: buildMusicName(info, 2)
               ),
-
-
+              
             ],
           ),
         )
@@ -227,6 +224,9 @@ class MuiscBillItemWidget extends StatelessWidget implements ItemPresenter<Music
       if(isLoading){
         return Image.asset('images/default_cover.png',width: 80,height: 80,fit: BoxFit.fill,);
       }else{
+        if(info==null){
+          return Image.asset('images/default_cover.png',width: 80,height: 80,fit: BoxFit.fill,);
+        }
         return Image.network(info.billboard.picS260,width: 80,height: 80,fit: BoxFit.fill,);
 
       }
@@ -235,23 +235,19 @@ class MuiscBillItemWidget extends StatelessWidget implements ItemPresenter<Music
   }
   Widget buildMusicName(MusicListInfo info,int index){
     String text='';
-
         if(isLoading){
-
           text = "加载中...";
         }else{
-          text = info.songList[index].title;
-          if(text.length>19){
-            text = text.substring(0,17)+'...';
+          if(info==null){
+            text = "加载中...";
+          }else{
+            text = info.songList[index].title;
+            if(text.length>19){
+              text = text.substring(0,17)+'...';
+            }
           }
-
         }
-
         return Text('${index+1}.${text}',maxLines: 1,overflow: TextOverflow.ellipsis,textAlign: TextAlign.start,style: TextStyle(fontSize: 14,color: Colors.black54),);
-
-
-
-
   }
 
 }
