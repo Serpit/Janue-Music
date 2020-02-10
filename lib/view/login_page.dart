@@ -6,7 +6,7 @@ import 'base.dart';
 import 'package:jian_yue/viewmodel/login_page_provide.dart';
 import 'package:flutter/cupertino.dart';
 import 'register_page.dart';
-
+import 'package:jian_yue/utils/toast.dart';
 
 class LoginPage extends PageProvideNode{
 
@@ -116,7 +116,14 @@ class _LoginPageContentState extends State<_LoginPageContent>{
   }
 
   login(){
-
+    if(mProvide.username==null || mProvide.username==''){
+      Toast.show('用户名不能为空', context);
+      return;
+    }
+    if(mProvide.password==null || mProvide.password==''){
+      Toast.show('密码不能为空', context);
+      return;
+    }
     final s  = mProvide.login().doOnListen((){
 
     }).doOnDone((){
@@ -124,7 +131,7 @@ class _LoginPageContentState extends State<_LoginPageContent>{
         print('login success');
         Navigator.pop(context);
       }else{
-        print('login error');
+        Toast.show('用户名或密码错误', context);
       }
     }).doOnCancel((){
     }).listen((_){

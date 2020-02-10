@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 class Constants{
-  static final String _IP = "192.168.1.102";
+  static final String _IP = "47.112.24.125";
   static final String APP_NAME = '简悦音乐';
   static final String SPLASH_URL = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
   static final String LOGIN_URL = "http://${_IP}:8899/janue_music_web/login";

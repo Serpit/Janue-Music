@@ -104,6 +104,14 @@ class _RegisterPageContentState extends State<_RegisterPageContent>{
   }
 
   register(){
+    if(mProvide.username==null || mProvide.username==''){
+      Toast.show('用户名不能为空', context);
+      return;
+    }
+    if(mProvide.password==null || mProvide.password==''){
+      Toast.show('密码不能为空', context);
+      return;
+    }
     final s = mProvide.register().doOnListen((){
 
     }).doOnDone((){

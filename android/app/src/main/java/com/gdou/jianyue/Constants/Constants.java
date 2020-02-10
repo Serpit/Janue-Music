@@ -19,6 +19,6 @@ public class Constants {
     public static final String SP_kEY_USER_ID = "sp_key_user_id";
     public static final String SP_KEY_IS_LOGIN = "sp_key_is_login";
     public static final String SP_KEY_USER_NAME = "sp_key_username";
-    private static final String IP = "192.168.1.102";
+    private static final String IP = "47.112.24.125";
     public static final String BASE_URL = "http://"+IP+":8899/janue_music_web";
 }
